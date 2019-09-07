@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.AdvStoreDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.AdvStore">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="storeName" column="storeName"/>
+        <result property="address" column="address"/>
+        <result property="addressName" column="addressName" />
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="tel" column="tel"/>
+        <result property="storeUrl" column="storeUrl"/>
+        <result property="storeDesc" column="storeDesc"/>
+        <result property="picUrl" column="picUrl"/>
+        <result property="viewCount" column="viewCount"/>
+        <result property="peopleCount" column="peopleCount"/>
+        <result property="industryId" column="industryId" />
+        <result property="wxQRCode" column="wxQRCode" />
+        <result property="wx" column="wx" />
+        <result property="stationCopyNo" column="stationCopyNo" />
+    </resultMap>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from adv_store where id = #{id}
+    </select>
+
+    <select id="selectByUserId" resultMap="baseResultMap">
+        select * from adv_store where userId = #{userId}
+    </select>
+    <select id="selectListByParam" resultMap="baseResultMap">
+        select * from adv_store
+        <where>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+            <if test="keywords != null and keywords != ''">
+                and storeName like '%${keywords}%'
+            </if>
+            <if test="industryId != null">
+                and industryId = #{industryId}
+            </if>
+            <if test="stationCopyNo != null and stationCopyNo != ''">
+                and stationCopyNo = #{stationCopyNo}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into adv_store (userId, storeName, address, addressName, longitude, latitude, tel, storeUrl, storeDesc,picUrl,
+        stationCopyNo, industryId, createdTime, wxQRCode, wx)
+        value (#{userId}, #{storeName}, #{address}, #{addressName}, #{longitude}, #{latitude}, #{tel}, #{storeUrl}, #{storeDesc},#{picUrl},
+        #{stationCopyNo}, #{industryId}, #{createdTime}, #{wxQRCode}, #{wx})
+    </insert>
+
+    <update id="modifyStore">
+        update adv_store
+        <set>
+            <if test="storeName != null and storeName != ''">
+                storeName = #{storeName},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="addressName != null and addressName != ''">
+                addressName = #{addressName},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude},
+            </if>
+            <if test="tel != null and tel != ''">
+                tel = #{tel},
+            </if>
+            <if test="storeUrl != null and storeUrl !=''">
+                storeUrl = #{storeUrl},
+            </if>
+            <if test="storeDesc != null and storeDesc !=''">
+                storeDesc = #{storeDesc},
+            </if>
+            <if test="picUrl != null and picUrl !=''">
+                picUrl = #{picUrl},
+            </if>
+            <if test="wxQRCode != null and wxQRCode != ''">
+                wxQRCode = #{wxQRCode},
+            </if>
+            <if test="wx != null and wx != ''">
+                wx = #{wx},
+            </if>
+            <if test="industryId != null">
+                industryId = #{industryId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="modifyStoreViewCountById">
+      update adv_store set viewCount = viewCount + 1 where id = #{id}
+    </update>
+
+    <update id="modifyStorePeopleCountById">
+      update adv_store set peopleCount = peopleCount + 1 where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from adv_store where id = #{id}
+    </delete>
+
+
+    <select id="count" resultType="long">
+        select count(1) from adv_store
+        <where>
+            <if test="stationCopyNo != null and stationCopyNo != ''">
+                and stationCopyNo = #{stationCopyNo}
+            </if>
+            <if test="industryId != null">
+                and industryId = #{industryId}
+            </if>
+            <if test="search != null and search != ''">
+                and (storeName like '%${search}%' )
+            </if>
+        </where>
+    </select>
+
+    <select id="pageSelectByParam" resultMap="baseResultMap">
+        select * from adv_store
+        <where>
+            <if test="stationCopyNo != null and stationCopyNo != ''">
+                and stationCopyNo = #{stationCopyNo}
+            </if>
+            <if test="industryId != null">
+                and industryId = #{industryId}
+            </if>
+            <if test="search != null and search != ''">
+                and (storeName like '%${search}%' )
+            </if>
+        </where>
+        order by createdTime desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <update id="modifyStoreIndustry">
+        update adv_store set industryId = #{industryId} where id = #{id}
+    </update>
+</mapper>

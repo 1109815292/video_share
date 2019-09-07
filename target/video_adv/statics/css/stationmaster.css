@@ -1,0 +1,196 @@
+body{
+    font-family: -apple-system-font,BlinkMacSystemFont,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei UI","Microsoft YaHei",Arial,sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 100;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+h3 {
+    font-size: 16px;
+}
+
+h4 {
+    font-size: 14px;
+}
+
+h5 {
+    font-size: 12px;
+}
+
+h6 {
+    font-size: 10px;
+}
+
+h3,
+h4,
+h5 {
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+a:focus {
+    outline: none;
+}
+ul li{list-style:none;}
+img{width:100%;}
+.color-red{color:#ff0000;}
+.clear{clear:both;}
+
+
+/*搜索*/
+.stationTop{width:100%;height:55px;background: #eee;margin:0;padding-top:5px;}
+.stationDistrict{float:left;height: 45px;line-height: 45px;margin-left:10px;font-size:16px;color:#555;text-align: left;font-weight: bold;}
+.stationSearch{float:right;width:70%;height:40px;margin-top:4px;overflow: hidden;margin-right:0px;}
+.stationSearch input{float:left;width:90%;}
+.stationSearch button{}
+.storeSearch{width:100%;height:55px;background: #ee3939;margin:0;padding-top:5px;}
+
+
+/*底部导航*/
+.stationBottom{background: #f7f7f7;width:100%;height:60px;position:fixed;bottom:0;margin: 0;padding:0;border-top:1px solid #d9d9d9;z-index: 100;}
+.stationBottom ul {padding:0;width: 100%;height: 60px;font-size:0;}
+.stationBottom ul li{float:left;width:25%;margin-top: 7px; position: relative;}
+.picdiv{float:left;width:100%;height: 22px;text-align: center;margin:0;}
+.picdiv img{width:22px;height: 22px;}
+.textdiv{float:left;width:100%;height: 30px;line-height:30px;text-align: center;font-size:16px;}
+
+.video-type-select{position: fixed;bottom:59px;left:43%;width:38%;height: 150px;background: #fff;border-radius: 6px 6px 0 0;
+    box-shadow: 1px 0 1px #aaa;display: none;z-index:100;border-left:1px solid #eee;}
+.video-type-btn{width:70%;height: 32px;line-height:32px;margin:0 auto;margin-top:30px;text-align:center;background: #fe6f45;border-radius: 6px;color:#fff;}
+
+/*视频广场*/
+.channel{width:100%;height: 100px;background: #fff;text-align: center;padding-top:12px;}
+.channel ul{}
+.channel ul li{float:left;width:20%;}
+.channel-icon{width:50px;height: 50px;margin:0 auto;}
+.channel-text{font-size:14px;color:#888;margin-top:10px;}
+
+.videoType{width: 100%; min-height: 45px; background: #fff;margin-top:6px;color: #666;font-size:14px;}
+.videoType ul{width:100%;padding:0;margin-top:10px;}
+.videoType ul li{float:left;height:45px;line-height:45px;width:25%;text-align: center;}
+.videoType ul li span{display: block;}
+.typeSelected{background: url("/statics/img/video/manage/bg_42.png") no-repeat center bottom;color:#111;font-size:16px;}
+
+/*店铺列表*/
+
+.storeList-cont{width:100%;padding-bottom:60px;}
+.storeInfo{width:100%;min-height:80px;margin-top:10px;background: #fff;}
+.storeInfoImg{float:left;margin:8px;width:60px;height: 60px;border-radius: 5px;overflow: hidden}
+.storeInfoName{margin-left:80px;position: relative;overflow: hidden;}
+.storeInfoName .productName{float:left;font-size:16px;color:#111;width:100%;margin-top:8px;}
+.storeInfoName .storeListName{float:left;width:100%;font-size:16px;margin-top:10px;color:#333;}
+.storeInfoName .storeListName img {width:18px;height: 18px;margin-right:6px;}
+.storeInfoName .storeListDesc{float:left;width:100%;font-size:14px;margin-top:6px;color:#888;}
+.storeInfoName .distance{position: absolute;top:12px;right: 15px;color:#888;font-size: 14px;}
+
+/*店铺详情*/
+.storeDetail{width:100%;min-height: 180px;padding:15px;}
+.storeDetail .storeTitle{width:100%;font-size:22px;margin-top:10px;}
+.storeDetail .storeTagRow{width:100%;height:30px;font-size:16px;margin-top:26px;}
+.storeDetail .storeTagRow .count{float:left;width:100px;height: 20px;}
+.storeDetail .storeTagRow .tag{float:right;}
+.storeDetail .storeAddress{width:100%;font-size:16px;margin-top:30px;padding-bottom:10px;border-bottom:1px solid #555;}
+.storeDetail .storeAddress .addressImg{width:18px;float:left;margin-right:6px;}
+.storeDetail .storeAddress .distance{color:#999;font-size:14px;margin:6px 0 0 22px;}
+
+.storeDetailPlay{
+    position: absolute;
+    width: 73px;
+    height: 73px;
+    z-index: 1100;
+    top: calc(50% - 37px);
+    left: calc(50% - 37px);
+}
+
+.video-wrapper{padding:25px 15px 15px 15px;}
+.video-wrapper .video-top{width:100%;margin-top:10px;}
+.video-wrapper .video-top .userHeadImg{float:left;width:50px;height: 50px;border-radius: 25px;overflow: hidden;}
+.video-wrapper .video-top .userName{float:left;font-size:18px;margin:15px 0 0 10px;}
+.video-wrapper .video-top .createdTime{float:right;width:50px;margin:18px 0 0 0;font-size:14px;color:#aaa;}
+.video-wrapper .videoTitle{width:100%;color: #fff;margin:15px 10px 0 0;font-size:16px;}
+.video-wrapper .video-coverImg{width:80%;margin-top:15px;}
+
+.video-bottom{width:100%;height: 40px;line-height:40px;font-size:14px;margin-top:10px;}
+.video-bottom ul{width:80%;padding:0;margin:0;}
+.video-bottom ul li{float:left;width:50%;text-align: left;vertical-align:middle}
+.video-bottom ul li img{width:22px; }
+.video-bottom ul li span{margin:1px 0 0 5px;}
+.video-bottom ul li .imgDiv{height:25px;line-height:25px;display: inline-block;vertical-align: middle;}
+.video-bottom ul li .textDiv{height:40px;line-height:40px;display: inline-block;padding-left:7px;}
+
+.addComment{width:100%;overflow: hidden;margin-top:10px;}
+.commentHeadImg{float:left;width:40px;height: 40px;border-radius: 20px;overflow: hidden;}
+.commentHint{float:left;color:#aaa;margin:10px 0 0 10px;font-size:16px;}
+.comment-wrapper{width:100%;background: #232122;}
+.commentCount{width:100%;text-align: center;padding-top:8px;background: #232122;}
+.comment{width:100%;overflow:hidden;padding:10px 0 15px 0;}
+.comment .comment-headImg{float:left;width:40px;height: 40px;border-radius: 20px;overflow: hidden;margin:6px 0 0 15px;}
+.comment .comment-middle{float:left;margin:8px 0 0 8px;}
+.comment-username{font-size:14px;color:#888;}
+.comment-createdTime{font-size:12px;color:#555;margin-top:5px;}
+.comment-cont{font-size:14px;color:#fff;margin-top:8px;}
+.comment .comment-right{float:right;width:40px;margin: 10px 10px 0 0;}
+.like{width:25px;height: 25px;margin:0 auto;}
+.likeCount{color:#999;height: 25px;line-height: 25px;width: 40px;text-align: center;}
+
+.comment-dialog{position: fixed;bottom:0;width:100%;height:150px;border-radius:6px 6px 0 0;background: #fff;z-index: 10;display: none;}
+.comment-btn{width:100%;height: 40px;line-height:40px;border-bottom:1px solid #eee;overflow: hidden;font-size:16px;}
+.comment-btn .left-cancel{float:left;color:#555;margin-left:10px;}
+.comment-btn .right-submit{float:right;color:#ff0000;margin-right:10px;}
+.comment-dialog textarea{width:100%;height:100px;border:0px;padding:10px;font-size:14px;}
+
+/*实体店开通*/
+.pay-wrapper{width:93%;height:130px;margin:0 auto;background: #fff;border-radius: 6px;margin-top:15px;}
+.pay-top{width: 100%;height: 45px;overflow: hidden;}
+.store-headImg{float:left;width:30px;height: 30px;border-radius: 15px;margin:5px 0 0 10px;overflow: hidden;}
+.store-userName{float:left;margin-left:8px;line-height:45px;font-size:16px;color:#555;}
+.pay-amount{width:100%;text-align: center;font-size:28px;}
+.pay-amount span{font-size:20px;}
+.pay-bottom{width:95%;margin:0 auto;margin-top:20px;border-top:1px solid #f5f5f5;overflow: hidden;}
+.pay-time{float:left;margin:5px 0 0 5px;font-size:14px;color:#999;}
+
+.payCover{position:absolute;top:0;left:0;width:100%;height: 100%;background: #111;z-index:1;opacity:0.7;display: none;}
+.storeVipPay{position:absolute;top:100px;left:calc(10% / 2);width:90%;height: 320px;background: #eee;border-radius: 8px;z-index:20;display: none;}
+.storePay-top{width:100%;height: 45px;line-height:45px;text-align: center;font-size:16px;font-weight: bold;}
+.storePay-btn{width:86%;height:42px;line-height:42px;text-align:center;background: #fe6f45;border-radius: 15px;margin:0 auto;margin-top:25px;color:#fff;}
+
+.check-bar{width:100%;height: 50px;background: #fff;overflow: hidden;position: fixed;bottom: 0;}
+.check-btn{float:right;margin:8px 10px 0 0;width:90px;height: 32px;line-height:32px;border-radius: 5px;background: #f8f8f8;
+    font-size:14px;color:#666;text-align: center;border:1px solid #666;}
+
+
+/*站点设置*/
+.stationSet-top{width:100%;min-height: 130px;background: #fff;margin:5px 0 12px 0;padding-top:15px;}
+.publicImg{width:60px;height: 60px;border-radius: 30px;overflow: hidden;margin:0 auto;}
+.stationName{width:100%;height: 30px;line-height: 30px;text-align: center;font-size: 16px;color:#111;margin-top:5px;}
+.district{width:100%;height: 26px;text-align: center;font-size:14px;color: #888;}
+
+.dialog-set{position: absolute;width:80%;height: 190px;background: #fff;border-radius: 5px;-webkit-box-shadow:2px 2px 2px 2px #aaa;
+-moz-box-shadow:2px 2px 2px 2px #aaa;box-shadow:2px 2px 2px 2px #aaa;  z-index: 100;left:10%;font-size:16px;display: none;}
+.dialog-title{width:100%;height: 40px;line-height: 40px;text-align: center;font-size:16px;border-bottom:1px solid #eee;font-weight:bold;background: #eee;}
+.dialog-input{width:100%;margin-top:25px;text-align: center;}
+.dialog-input input{width:80%;height: 30px;font-size:16px;margin:0 auto;border:0;border-bottom:1px solid #f8f8f8;text-align: center;}
+.btn-bar{width:100%;text-align: center;overflow: hidden;margin-top:30px;}
+.btn-div{float:left;width:50%;}
+.btn{width:70%;height:32px;line-height:32px;border-radius: 10px;margin:0 auto;text-align: center;}
+.btn-save{background: #f95c5c;color:#fff;}
+.btn-cancel{border:1px solid #aaa;}
+
+
+
+.
+

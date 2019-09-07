@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.VideoStoreDao">
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.VideoStore">
+        <id property="id" column="id" />
+        <result property="userId" column="userId" />
+        <result property="storeId" column="storeId" />
+        <result property="title" column="title" />
+        <result property="brief" column="brief" />
+        <result property="industryId" column="industryId" />
+        <result property="coverImg" column="coverImg" />
+        <result property="videoType" column="videoType" />
+        <result property="videoUrl" column="videoUrl" />
+        <result property="createdTime" column="createdTime" />
+        <result property="checkState" column="checkState" />
+        <result property="commentCount" column="commentCount" />
+        <result property="forwardCount" column="forwardCount" />
+        <result property="stationCopyNo" column="stationCopyNo" />
+        <result property="sharedWords" column="sharedWords" />
+        <result property="copyNo" column="copyNo" />
+        <result property="within48hours" column="within48hours" />
+        <result property="isTop" column="isTop" />
+        <result property="notified" column="notified" />
+    </resultMap>
+
+    <resultMap id="videoStoreResultMap" type="com.juheshi.video.entity.VideoStore">
+        <id property="id" column="id" />
+        <result property="userId" column="userId" />
+        <result property="storeId" column="storeId" />
+        <result property="title" column="title" />
+        <result property="brief" column="brief" />
+        <result property="industryId" column="industryId" />
+        <result property="coverImg" column="coverImg" />
+        <result property="videoType" column="videoType" />
+        <result property="videoUrl" column="videoUrl" />
+        <result property="createdTime" column="createdTime" />
+        <result property="checkState" column="checkState" />
+        <result property="commentCount" column="commentCount" />
+        <result property="forwardCount" column="forwardCount" />
+        <result property="stationCopyNo" column="stationCopyNo" />
+        <result property="sharedWords" column="sharedWords" />
+        <result property="copyNo" column="copyNo" />
+        <result property="within48hours" column="within48hours" />
+        <result property="isTop" column="isTop" />
+
+        <collection property="videoCommentList" ofType="com.juheshi.video.entity.VideoComment">
+            <id property="id" column="commentId" />
+            <result property="commentCont" column="commentCont" />
+            <result property="createdTime" column="createdTime" />
+            <result property="likeCount" column="likeCount" />
+
+            <association property="appUser" javaType="com.juheshi.video.entity.AppUser">
+                <id property="id" column="commentUserId" />
+                <result property="headImg" column="headImg" />
+                <result property="userName" column="userName" />
+            </association>
+        </collection>
+    </resultMap>
+
+    <resultMap id="videoStoreWithImageResultMap" type="com.juheshi.video.entity.VideoStore">
+        <id property="id" column="id" />
+        <result property="userId" column="userId" />
+        <result property="storeId" column="storeId" />
+        <result property="title" column="title" />
+        <result property="brief" column="brief" />
+        <result property="industryId" column="industryId" />
+        <result property="coverImg" column="coverImg" />
+        <result property="videoType" column="videoType" />
+        <result property="videoUrl" column="videoUrl" />
+        <result property="createdTime" column="createdTime" />
+        <result property="checkState" column="checkState" />
+        <result property="commentCount" column="commentCount" />
+        <result property="forwardCount" column="forwardCount" />
+        <result property="stationCopyNo" column="stationCopyNo" />
+        <result property="sharedWords" column="sharedWords" />
+        <result property="copyNo" column="copyNo" />
+        <result property="within48hours" column="within48hours" />
+        <result property="isTop" column="isTop" />
+
+        <collection property="images" ofType="com.juheshi.video.entity.VideoStoreImage">
+            <id property="id" column="id" />
+            <result property="videoId" column="videoId" />
+            <result property="picUrl" column="picUrl" />
+            <result property="sort" column="sort" />
+        </collection>
+    </resultMap>
+
+    <resultMap id="videoStoreForPlayResultMap" type="com.juheshi.video.entity.VideoStore">
+        <id property="id" column="id" />
+        <result property="userId" column="userId" />
+        <result property="storeId" column="storeId" />
+        <result property="title" column="title" />
+        <result property="brief" column="brief" />
+        <result property="industryId" column="industryId" />
+        <result property="coverImg" column="coverImg" />
+        <result property="videoType" column="videoType" />
+        <result property="videoUrl" column="videoUrl" />
+        <result property="createdTime" column="createdTime" />
+        <result property="checkState" column="checkState" />
+        <result property="commentCount" column="commentCount" />
+        <result property="forwardCount" column="forwardCount" />
+        <result property="stationCopyNo" column="stationCopyNo" />
+        <result property="sharedWords" column="sharedWords" />
+        <result property="copyNo" column="copyNo" />
+        <result property="within48hours" column="within48hours" />
+        <result property="isTop" column="isTop" />
+
+        <collection property="images" ofType="com.juheshi.video.entity.VideoStoreImage">
+            <id property="id" column="id" />
+            <result property="videoId" column="videoId" />
+            <result property="picUrl" column="picUrl" />
+            <result property="sort" column="sort" />
+        </collection>
+    </resultMap>
+
+    <resultMap id="stationStoreVideoResultMap" type="map">
+        <id property="id" column="id" />
+        <result property="title" column="title" />
+        <result property="coverImg" column="coverImg" />
+        <result property="viewCount" column="viewCount" />
+        <result property="videoType" column="videoType" />
+        <result property="videoUrl" column="videoUrl" />
+        <result property="sharedWords" column="sharedWords" />
+        <result property="storeId" column="storeId" />
+
+        <association property="appUser" javaType="map">
+            <id property="id" column="userId" />
+            <result property="headImg" column="headImg" />
+            <result property="userName" column="userName" />
+        </association>
+        <association property="industry" javaType="map">
+            <id property="id" column="industryId" />
+            <result property="industry" column="industry" />
+        </association>
+    </resultMap>
+
+    <select id="findVideoStoreByStoreId" resultMap="videoStoreResultMap">
+        select a.*,b.id as commentId, b.userId as commentUserId, b.commentCont, b.createdTime, b.likeCount, c.headImg, c.userName
+        from video_store a left join video_comment b on a.id=b.videoId
+        left join app_user c on b.userId = c.id
+        where a.storeId = #{storeId}
+        order by a.createdTime desc
+    </select>
+
+    <select id="findVideoStore" parameterType="map" resultMap="stationStoreVideoResultMap">
+        select a.id, a.title, a.coverImg, a.viewCount, a.userId, a.videoType, a.videoUrl, a.sharedWords, a.storeId, b.headImg, b.userName,a.industryId,c.industry from video_store a
+        left join app_user b on a.userId = b.id left join industry c on a.industryId = c.id
+        where a.stationCopyNo = #{stationCopyNo}
+        and a.checkState >= 0
+        <if test="industryId != null"> and a.industryId = #{industryId}</if>
+        <if test="ignoreIds != null">
+            and a.id not in
+            <foreach collection="ignoreIds" item="id" index="index" separator="," open="(" close=")">
+                ${id}
+            </foreach>
+        </if>
+        order by within48hours,a.viewCount desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="findVideoForPlay" parameterType="map" resultMap="videoStoreForPlayResultMap">
+        select a.id, a.title, a.coverImg, a.viewCount, a.userId, a.videoType, a.videoUrl, a.sharedWords, b.headImg, b.userName,a.industryId,c.industry from video_store a
+        left join app_user b on a.userId = b.id left join industry c on a.industryId = c.id
+        where a.stationCopyNo = #{stationCopyNo}
+        and a.checkState >= 0
+        <if test="industryId != null"> and a.industryId = #{industryId}</if>
+        <if test="ignoreIds != null">
+            and a.id not in
+            <foreach collection="ignoreIds" item="id" index="index" separator="," open="(" close=")">
+                ${id}
+            </foreach>
+        </if>
+        order by within48hours, a.viewCount desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="findRecommendVideoStore" parameterType="map" resultMap="stationStoreVideoResultMap">
+        select a.id, a.title, a.coverImg, a.viewCount, a.userId, b.headImg, b.userName,a.industryId,c.industry from video_store a
+        left join app_user b on a.userId = b.id left join industry c on a.industryId = c.id
+        where date(a.createdTime) BETWEEN  current_date()-2 and sysdate()
+        and a.stationCopyNo = #{stationCopyNo}
+        and a.checkState >= 0
+        order by a.viewCount desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="findVideoStoreByUserId" resultType="com.juheshi.video.entity.VideoStore">
+        select * from video_store where userId = #{userId} order by createdTime desc
+    </select>
+
+    <select id="findVideoStoreById" resultType="com.juheshi.video.entity.VideoStore">
+        select * from video_store where id = #{id}
+    </select>
+
+    <select id="findVideoStoreWithImageById" resultMap="videoStoreWithImageResultMap">
+        select * from video_store where id = #{id}
+    </select>
+
+    <insert id="insertVideoStore" parameterType="com.juheshi.video.entity.VideoStore" useGeneratedKeys="true" keyProperty="id">
+        insert into video_store (userId, storeId, title, brief, industryId, otherIndustry, coverImg, videoType, videoUrl,
+        createdTime, checkState, stationCopyNo, sharedWords, copyNo, within48hours)
+        values (#{userId}, #{storeId}, #{title}, #{brief}, #{industryId}, #{otherIndustry}, #{coverImg}, #{videoType},
+        #{videoUrl}, #{createdTime}, #{checkState}, #{stationCopyNo}, #{sharedWords}, #{copyNo}, #{within48hours})
+    </insert>
+
+    <update id="updateVideoStore" parameterType="com.juheshi.video.entity.VideoStore">
+        update video_store
+        <set>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="brief != null and brief != ''">brief = #{brief},</if>
+            <if test="coverImg != null and coverImg != ''">coverImg = #{coverImg},</if>
+            <if test="videoType != null">videoType = #{videoType},</if>
+            <if test="videoUrl != null and videoUrl != ''">videoUrl = #{videoUrl},</if>
+            <if test="commentCount != null">commentCount = #{commentCount},</if>
+            <if test="forwardCount != null">forwardCount = #{forwardCount},</if>
+            <if test="viewCount != null">viewCount = #{viewCount},</if>
+            <if test="checkState != null">checkState = #{checkState},</if>
+            <if test="sharedWords != null">sharedWords = #{sharedWords},</if>
+            <if test="isTop != null">isTop = #{isTop},</if>
+            <if test="notified != null">notified = #{notified},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateVideoStoreWithin48hoursForTask">
+        <![CDATA[ update video_store set within48hours = 0 where createdTime <=(NOW() - interval 48 hour) and within48hours = 1]]>
+    </update>
+
+    <delete id="deleteById">
+        delete from video_store where id = #{id}
+    </delete>
+
+    <update id="updateVideoStoreCoverImg">
+        update video_store set coverImg = #{coverImg} where id = #{id}
+    </update>
+
+    <update id="updateVideoNotified">
+        update video_store set notified = #{notified} where id = #{id}
+    </update>
+
+    <update id="batchUpdateVideoNotified">
+        update video_store set notified = #{notified} where id in
+        <foreach collection="ids" item="id" index="index" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="simpleSelectByParam" resultMap="baseResultMap">
+        select * from video_store
+        <where>
+            <if test="stationCopyNo != null and stationCopyNo !=''">
+                and stationCopyNo = #{stationCopyNo}
+            </if>
+            <if test="checkState != null">
+                and checkState = #{checkState}
+            </if>
+            <if test="notified != null">
+                and notified = #{notified}
+            </if>
+        </where>
+    </select>
+</mapper>

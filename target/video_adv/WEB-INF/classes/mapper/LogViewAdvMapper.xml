@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.LogViewAdvDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.LogViewAdv">
+        <id property="id" column="id"/>
+        <result property="advType" column="advType"/>
+        <result property="advId" column="advId"/>
+        <result property="userId" column="userId"/>
+        <result property="createdTime" column="createdTime"/>
+    </resultMap>
+
+    <resultMap id="userResultMap" type="map">
+        <id property="id" column="id" />
+        <result property="headImg" column="headImg" />
+        <result property="userName" column="userName" />
+        <result property="copyNo" column="copyNo" />
+        <result property="createdTime" column="createdTime" />
+    </resultMap>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into log_view_adv (advType, advId, userId, createdTime)
+        value (#{advType}, #{advId}, #{userId}, #{createdTime})
+    </insert>
+
+    <select id="selectViewCountByAdvId" resultType="long">
+        select count(1) from log_view_adv where advType = #{advType} and advId = #{advId}
+    </select>
+
+    <select id="selectViewPeopleCountByAdvId" resultType="long">
+        select count(distinct userId) from log_view_adv where advType = #{advType} and advId = #{advId}
+    </select>
+
+    <select id="checkUserView" resultType="int">
+        select count(1) from log_view_adv where advType=#{advType} and advId = #{advId} and userId=#{userId}
+    </select>
+
+
+    <select id="findAdvViewLogByAdvId" parameterType="int" resultMap="userResultMap">
+      select u.id,u.headImg,u.userName,u.copyNo,t.createdTime
+      from app_user u
+        inner join (select advType, advId, userId, createdTime from log_view_adv where advType = #{advType} and advId = #{advId}) t
+                  on u.id = t.userId
+      order by u.id,t.createdTime;
+    </select>
+
+</mapper>

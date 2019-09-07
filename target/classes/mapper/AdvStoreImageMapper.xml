@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.AdvStoreImageDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.AdvStoreImage">
+        <id property="id" column="id"/>
+        <result property="advStoreId" column="advStoreId"/>
+        <result property="picUrl" column="picUrl"/>
+        <result property="sort" column="sort"/>
+        <result property="createdTime" column="createdTime"/>
+        <result property="deletedAt" column="deletedAt"/>
+        <result property="picType" column="picType" />
+    </resultMap>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from adv_store_image where id = #{id}
+    </select>
+
+    <select id="selectByAdvStoreId" resultMap="baseResultMap">
+        select * from adv_store_image where advStoreId = #{advStoreId} and deletedAt is null
+    </select>
+
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into adv_store_image (advStoreId, picUrl, sort, createdTime, picType)
+        value (#{advStoreId}, #{picUrl}, #{sort}, #{createdTime}, #{picType})
+    </insert>
+
+    <insert id="saveBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into adv_store_image (advStoreId, picUrl, sort, createdTime, picType)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.advStoreId}, #{item.picUrl}, #{item.sort}, #{item.createdTime}, #{item.picType})
+        </foreach>
+    </insert>
+
+    <update id="updateForDelete">
+        update adv_store_image set deletedAt = #{deletedAt} where id = #{id}
+    </update>
+
+    <update id="updateForDeleteBatch">
+        update adv_store_image set deletedAt = #{deletedAt}
+        where id in
+        <foreach collection="ids" item="id" index="index" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <delete id="deleteById">
+        delete from adv_store_image where id = #{id}
+    </delete>
+
+</mapper>

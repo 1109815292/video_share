@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.SeckillGroupDao">
+
+    <sql id="ressult">
+        id as id,
+        seckill_id as seckillId,
+        cost_price as costPrice,
+        num as num
+    </sql>
+
+    <select id="findOneSeckillGroup" resultType="com.juheshi.video.entity.SeckillGroup" parameterType="com.juheshi.video.entity.SeckillGroup">
+        select
+        <include refid="ressult"/>
+        from seckill_group
+        <where>
+
+        </where>
+    </select>
+
+    <insert id="insertSeckillGroup" useGeneratedKeys="true" keyProperty="id" parameterType="com.juheshi.video.entity.SeckillGroup">
+        insert into seckill_group (
+                    seckill_id,
+                    cost_price,
+                    num
+                    ) values (
+                    #{seckillId},
+                    #{costPrice},
+                    #{num}
+                    )
+    </insert>
+
+    <update id="updateSeckillGroup" parameterType="com.juheshi.video.entity.SeckillGroup">
+        update seckill_group set
+            seckill_id = #{seckillId},
+            cost_price = #{costPrice},
+            num = #{num}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSeckillGroup" parameterType="java.lang.Integer">
+        delete from seckill_group where id = #{id}
+    </delete>
+</mapper>

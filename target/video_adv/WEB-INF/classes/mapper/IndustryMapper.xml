@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.IndustryDao">
+
+    <select id="findIndustryById" resultType="com.juheshi.video.entity.Industry">
+        select * from industry where id= #{id}
+    </select>
+
+    <select id="findAllIndustry" resultType="com.juheshi.video.entity.Industry">
+        select * from industry order by id
+    </select>
+
+    <select id="findChannelShow" resultType="com.juheshi.video.entity.Industry">
+        select * from industry where channelShow = 'Y' order by id
+    </select>
+
+    <select id="findLabelShow" resultType="com.juheshi.video.entity.Industry">
+        select *  from industry where labelShow = 'Y' order by id
+    </select>
+
+</mapper>

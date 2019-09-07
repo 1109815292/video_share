@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.SystemDao">
+
+    <resultMap id="permissionResultMap" type="map">
+        <id property="id" column="id" />
+        <result property="menuDesc" column="menuDesc" />
+        <result property="isGrant" column="isGrant" />
+        <result property="isQuery" column="isQuery" />
+        <result property="isInsert" column="isInsert" />
+        <result property="isUpdate" column="isUpdate" />
+        <result property="isDelete" column="isDelete" />
+        <result property="isAffirm" column="isAffirm" />
+        <result property="isCancel" column="isCancel" />
+        <result property="isPrint" column="isPrint" />
+        <result property="isExport" column="isExport" />
+    </resultMap>
+
+    <resultMap id="userResultMap" type="map">
+        <id property="id" column="id" />
+        <result property="parentId" column="parentId" />
+        <result property="userName" column="userName" />
+        <result property="fullName" column="fullName" />
+        <result property="mobile" column="mobile" />
+        <result property="roleName" column="roleName" />
+        <result property="state" column="state" />
+        <result property="createdTime" column="createdTime" />
+        <result property="type" column="type" />
+        <result property="copyNo" column="copyNo" />
+        <association property="parent" javaType="com.juheshi.video.entity.SystemUser">
+            <id property="id" column="p_id"/>
+            <result property="userName" column="p_userName"/>
+            <result property="fullName" column="p_fullName"/>
+        </association>
+    </resultMap>
+
+
+    <select id="findByUserNameAndPassword" resultType="com.juheshi.video.entity.SystemUser">
+        select * from sys_user where username = #{userName, jdbcType=CHAR} and password=#{password, jdbcType=CHAR}
+    </select>
+
+
+    <select id="findAllUser" resultMap="userResultMap">
+        select a.id, a.userName, a.fullName, a.mobile, b.roleName, a.state, a.createdTime from sys_user a, sys_role b
+        where a.roleId = b.id order by a.id
+    </select>
+
+    <select id="countAllAdminUser" resultType="java.lang.Integer">
+        select count(*) from sys_user
+    </select>
+
+    <select id="findAllRole" resultType="com.juheshi.video.entity.SystemRole">
+        select * from sys_role order by id;
+    </select>
+
+    <select id="findUserById" parameterType="int" resultType="com.juheshi.video.entity.SystemUser">
+        select * from sys_user where id = #{id}
+    </select>
+
+    <select id="findRoleById" parameterType="int" resultType="com.juheshi.video.entity.SystemRole">
+        select * from sys_role where id = #{id}
+    </select>
+
+
+    <select id="findAllSysMenu" resultType="com.juheshi.video.entity.SystemMenu">
+        select * from sys_menu order by id
+    </select>
+
+    <select id="findSysMenuByActionName" parameterType="string" resultType="com.juheshi.video.entity.SystemMenu">
+        select * from sys_menu where actionName like #{actionName}
+    </select>
+
+    <select id="findRolePermissionByRoleId" parameterType="int" resultMap="permissionResultMap">
+        select b.id,b.menuDesc, a.isGrant, a.isQuery, a.isInsert, a.isUpdate, a.isDelete, a.isAffirm, a.isCancel, a.isPrint,
+         a.isExport from sys_role_permission a, sys_menu b where a.menuId = b.id and roleId = #{roleId}
+    </select>
+
+    <select id="findPermissionByRoleIdAndMenuId" parameterType="int" resultType="com.juheshi.video.entity.SystemRolePermission">
+        select * from sys_role_permission where roleId = #{roleId} and menuId = #{menuId}
+    </select>
+
+    <insert id="insertUser" parameterType="com.juheshi.video.entity.SystemUser">
+        insert into sys_user (userName, fullName, mobile, password, roleId, state,`type`, createdTime, parentId)
+        values (#{userName}, #{fullName}, #{mobile}, #{password}, #{roleId}, #{state}, #{type}, #{createdTime},#{parentId})
+    </insert>
+
+    <update id="updateUser" parameterType="com.juheshi.video.entity.SystemUser">
+        update sys_user set userName = #{userName}
+        <if test="fullName != null">,fullName = #{fullName}</if>
+        <if test="mobile != null">,mobile = #{mobile}</if>
+        <if test="password != null">,password = #{password}</if>
+        <if test="roleId != null">,roleId = #{roleId}</if>
+        <if test="state != null">,state = #{state}</if>
+        <if test="type != null">,`type` = #{type}</if>
+        <if test="copyNo != null">,copyNo = #{copyNo}</if>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="int">
+        delete from sys_user where id = #{id}
+    </delete>
+
+    <insert id="insertRole" parameterType="com.juheshi.video.entity.SystemRole">
+        insert into sys_role (roleName, roleDesc, state)
+        value (#{roleName}, #{roleDesc}, #{state})
+    </insert>
+
+    <update id="updateRole" parameterType="com.juheshi.video.entity.SystemRole">
+        update sys_role set roleName = #{roleName}
+        <if test="roleDesc != null">, roleDesc = #{roleDesc}</if>
+        <if test="state != null">, state = #{state}</if>
+        where id = #{id}
+    </update>
+
+    <insert id="insertRolePermission" parameterType="com.juheshi.video.entity.SystemRolePermission">
+        insert into sys_role_permission (roleId, menuId, isGrant) values (#{roleId}, #{menuId}, #{isGrant})
+    </insert>
+
+    <delete id="deleteRolePermission" parameterType="int">
+        delete from sys_role_permission where id = #{id}
+    </delete>
+
+    <delete id="deleteRole" parameterType="int">
+        delete from sys_role where id = #{id}
+    </delete>
+
+    <select id="findAllSysUserByParam" resultMap="userResultMap">
+        select a.id, a.userName, a.fullName, a.mobile, b.roleName, a.state, a.createdTime, a.type, a.copyNo from sys_user a, sys_role b
+        <where>
+            a.roleId = b.id
+            <if test="search != null and search !=''">
+                and (a.userName LIKE '%${search}%' or a.fullName LIKE '%${search}%')
+            </if>
+            <if test="parentId != null">
+                and a.parentId = #{parentId}
+            </if>
+            <if test="types != null">
+                and a.type in
+                <foreach collection="types" item="type" index="index"
+                         open="(" close=")" separator=",">
+                    #{type}
+                </foreach>
+            </if>
+        </where>
+        order by a.createdTime desc
+    </select>
+
+    <select id="pageFindSysUserByParam" resultMap="userResultMap">
+        select a.id, a.userName, a.fullName, a.mobile,a.state, a.createdTime, a.type, a.copyNo,
+         b.roleName,
+         c.id as p_id, c.userName as p_userName, c.fullName as p_fullName
+        from sys_user a, sys_role b, sys_user c
+      <where>
+          a.roleId = b.id
+          and a.parentId = c.id
+          <if test="search != null and search !=''">
+              and (a.userName LIKE '%${search}%' or a.fullName LIKE '%${search}%')
+          </if>
+          <if test="userName != null and userName != ''">
+              and a.userName = #{userName}
+          </if>
+          <if test="parentId != null">
+              and a.parentId = #{parentId}
+          </if>
+          <if test="types != null">
+              and a.type in
+              <foreach collection="types" item="type" index="index"
+                       open="(" close=")" separator=",">
+                  #{type}
+              </foreach>
+          </if>
+      </where>
+      order by a.createdTime desc
+      limit #{limit} offset #{offset}
+    </select>
+
+    <select id="countForPageFindSysUserByParam" resultType="long">
+        select count(1)
+        from sys_user a, sys_role b, sys_user c
+        <where>
+            a.roleId = b.id
+            and a.parentId = c.id
+            <if test="search != null and search !=''">
+                and (a.userName LIKE '%${search}%' or a.fullName LIKE '%${search}%')
+            </if>
+            <if test="userName != null and userName != ''">
+                and a.userName = #{userName}
+            </if>
+            <if test="parentId != null">
+                and a.parentId = #{parentId}
+            </if>
+            <if test="types != null">
+                and a.type in
+                <foreach collection="types" item="type" index="index"
+                         open="(" close=")" separator=",">
+                    #{type}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <update id="modifySystemUserForBindCopyNo">
+        update sys_user set copyNo = #{copyNo} where id = #{id}
+    </update>
+</mapper>

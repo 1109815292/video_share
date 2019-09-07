@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.VideoStoreImageDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.VideoStoreImage">
+        <id property="id" column="id"/>
+        <result property="videoId" column="videoId"/>
+        <result property="picUrl" column="picUrl"/>
+        <result property="sort" column="sort"/>
+        <result property="createdTime" column="createdTime"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from video_store_image where id = #{id}
+    </select>
+
+    <select id="selectByVideoId" resultMap="baseResultMap">
+        select * from video_store_image where videoId = #{videoId}
+    </select>
+
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into video_store_image (videoId, picUrl, sort, createdTime)
+        value (#{videoId}, #{picUrl}, #{sort}, #{createdTime})
+    </insert>
+
+    <insert id="saveBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into video_store_image (videoId, picUrl, sort, createdTime)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.videoId}, #{item.picUrl}, #{item.sort}, #{item.createdTime})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById">
+        delete from video_store_image where id = #{id}
+    </delete>
+
+    <update id="updateVideoStoreImage">
+        update video_store_image set picUrl = #{picUrl} where id = #{id}
+    </update>
+
+</mapper>

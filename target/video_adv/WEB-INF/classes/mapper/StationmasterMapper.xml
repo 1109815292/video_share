@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.StationmasterDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.Stationmaster">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="copyNo" column="copyNo"/>
+        <result property="stationName" column="stationName"/>
+        <result property="publicWx" column="publicWx"/>
+        <result property="publicImg" column="publicImg"/>
+        <result property="publicQRCode" column="publicQRCode"/>
+        <result property="stationDistrictId" column="stationDistrictId"/>
+        <result property="state" column="state"/>
+        <result property="createdTime" column="createdTime"/>
+    </resultMap>
+
+    <insert id="save">
+        insert into stationmaster(userId, copyNo, stationDistrictId, state, createdTime)
+            value (#{userId}, #{copyNo}, #{stationDistrictId}, #{state}, #{createdTime})
+    </insert>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select *
+        from stationmaster
+        where id = #{id}
+    </select>
+
+    <select id="selectByUserId" resultMap="baseResultMap">
+        select *
+        from stationmaster
+        where userId = #{userId}
+    </select>
+
+    <select id="selectByCopyNo" resultMap="baseResultMap">
+        select *
+        from stationmaster
+        where copyNo = #{copyNo}
+    </select>
+
+
+    <update id="update">
+        update stationmaster
+        <set>
+            <if test="stationName != null and stationName != ''">
+                stationName = #{stationName},
+            </if>
+            <if test="publicWx != null and publicWx != ''">
+                publicWx = #{publicWx},
+            </if>
+            <if test="publicImg != null and publicImg != ''">
+                publicImg = #{publicImg},
+            </if>
+            <if test="publicQRCode != null and publicQRCode != ''">
+                publicQRCode = #{publicQRCode},
+            </if>
+            <if test="stationDistrictId != null">
+                stationDistrictId = #{stationDistrictId},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.SeckillStatisDao">
+
+    <sql id="ressult">
+        ID as id,
+        seckill_id as seckillId,
+        sala_num as salaNum,
+        exam_num as examNum,
+        totel_price as totelPrice
+    </sql>
+
+    <select id="findOneSeckillStatis" resultType="com.juheshi.video.entity.SeckillStatis" parameterType="com.juheshi.video.entity.SeckillStatis">
+        select
+        <include refid="ressult"/>
+        from seckill_statis
+        <where>
+
+        </where>
+    </select>
+
+    <insert id="insertSeckillStatis" useGeneratedKeys="true" keyProperty="id" parameterType="com.juheshi.video.entity.SeckillStatis">
+        insert into seckill_statis (
+                    seckill_id,
+                    sala_num,
+                    exam_num,
+                    totel_price
+                    ) values (
+                    #{seckillId},
+                    #{salaNum},
+                    #{examNum},
+                    #{totelPrice}
+                    )
+    </insert>
+
+    <update id="updateSeckillStatis" parameterType="com.juheshi.video.entity.SeckillStatis">
+        update seckill_statis set
+            seckill_id = #{seckillId},
+            sala_num = #{salaNum},
+            exam_num = #{examNum},
+            totel_price = #{totelPrice}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSeckillStatis" parameterType="java.lang.Integer">
+        delete from seckill_statis where id = #{id}
+    </delete>
+</mapper>

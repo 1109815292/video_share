@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.AppUserClientDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.AppUserClient">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="clientUserId" column="clientUserId"/>
+        <result property="viewCount" column="viewCount"/>
+        <result property="lastViewTime" column="lastViewTime"/>
+        <result property="videoViewCount" column="videoViewCount" />
+        <result property="productViewCount" column="productViewCount" />
+        <result property="advViewCount" column="advViewCount" />
+        <result property="homePageViewCount" column="homePageViewCount" />
+    </resultMap>
+
+    <resultMap id="appUserCascadeResultMap" extends="baseResultMap" type="com.juheshi.video.entity.AppUserClient">
+        <association property="clientUser" javaType="com.juheshi.video.entity.AppUser">
+            <id column="id" property="id"/>
+            <result column="copyNo" property="copyNo"/>
+            <result column="userName" property="userName"/>
+            <result column="headImg" property="headImg"/>
+        </association>
+    </resultMap>
+
+    <sql id="baseColumns">
+         ${alias}.*
+    </sql>
+
+    <sql id="appUserColumns">
+        ${alias}.userName, ${alias}.copyNo, ${alias}.headImg
+    </sql>
+
+    <select id="countViewCountByViewType" parameterType="int" resultType="long">
+        select count(1) from app_user_client where userId = #{userId} and clientUserId = #{clientUserId} and viewType = #{viewType}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into app_user_client (userId, clientUserId, viewCount, lastViewTime, videoViewCount, productViewCount, advViewCount,
+        homePageViewCount) value (#{userId}, #{clientUserId}, #{viewCount}, #{lastViewTime}, #{videoViewCount}, #{productViewCount},
+        #{advViewCount}, #{homePageViewCount})
+    </insert>
+
+    <update id="updateAppUserClient" parameterType="com.juheshi.video.entity.AppUserClient">
+        update app_user_client
+        <set>
+            <if test="viewCount != null">viewCount = #{viewCount},</if>
+            <if test="lastViewTime != null">lastViewTime = #{lastViewTime},</if>
+            <if test="videoViewCount != null">videoViewCount = #{videoViewCount},</if>
+            <if test="productViewCount != null">productViewCount = #{productViewCount},</if>
+            <if test="advViewCount != null">advViewCount = #{advViewCount},</if>
+            <if test="homePageViewCount != null">homePageViewCount = #{homePageViewCount},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from app_user_client where id = #{id}
+    </select>
+
+    <select id="selectByUserIdAndclientUserId" resultType="com.juheshi.video.entity.AppUserClient">
+        select * from app_user_client where userId = #{userId} and clientUserId = #{clientUserId}
+    </select>
+
+    <select id="selectByUserId" resultMap="baseResultMap">
+        select * from app_user_client where userId = #{userId}
+    </select>
+
+    <select id="selectByParam" resultMap="appUserCascadeResultMap">
+        select
+        <include refid="baseColumns">
+            <property name="alias" value="auc"/>
+        </include>
+        ,
+        <include refid="appUserColumns">
+            <property name="alias" value="au"/>
+        </include>
+        from app_user_client auc inner join app_user au on auc.clientUserId = au.id
+        <where>
+            <if test="userId != null">
+                and auc.userId = #{userId}
+            </if>
+            <if test="clientUserId != null">
+                and auc.clientUserId = #{clientUserId}
+            </if>
+            <if test="days != null">
+                and auc.lastViewTime >= date_sub(now() ,interval #{days} day)
+            </if>
+        </where>
+        order by auc.lastViewTime desc
+    </select>
+
+    <update id="modifyViewCount">
+        update app_user_client set viewCount = viewCount+1, lastViewTime = #{lastViewTime}
+        where userId = #{userId} and clientUserId = #{clientUserId}
+    </update>
+
+    <select id="checkIsMyClient" resultType="int">
+        select count(1) from app_user_client where userId = #{userId} and clientUserId = #{clientUserId}
+    </select>
+</mapper>

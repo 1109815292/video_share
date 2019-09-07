@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.LogVipRecordDao">
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.LogVipRecord">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="vipTypeId" column="vipTypeId"/>
+        <result property="type" column="type"/>
+        <result property="price" column="price"/>
+        <result property="remark" column="remark"/>
+        <result property="sysUserId" column="sysUserId"/>
+        <result property="createdTime" column="createdTime"/>
+    </resultMap>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into log_vip_record(userId, vipTypeId, `type`, price, remark, sysUserId, createdTime)
+        value (#{userId}, #{vipTypeId}, #{type}, #{price}, #{remark}, #{sysUserId}, #{createdTime})
+    </insert>
+
+
+</mapper>

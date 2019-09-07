@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.DistrictDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.District">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="initial" column="initial"/>
+        <result property="initials" column="initials"/>
+        <result property="pinyin" column="pinyin"/>
+        <result property="extra" column="extra"/>
+        <result property="suffix" column="suffix"/>
+        <result property="code" column="code"/>
+        <result property="areaCode" column="area_code"/>
+        <result property="order" column="order"/>
+    </resultMap>
+
+    <resultMap id="cascadeResultMap" type="com.juheshi.video.entity.District" extends="baseResultMap">
+        <association property="parent" javaType="com.juheshi.video.entity.District">
+            <id column="p1_id" property="id"/>
+            <result column="p1_parent_id" property="parentId"/>
+            <result column="p1_name" property="name"/>
+            <result column="p1_suffix" property="suffix"/>
+            <association property="parent" javaType="com.juheshi.video.entity.District">
+                <id column="p2_id" property="id"/>
+                <result column="p2_parent_id" property="parentId"/>
+                <result column="p2_name" property="name"/>
+                <result column="p2_suffix" property="suffix"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select *
+        from district
+        where id = #{id}
+    </select>
+
+    <select id="selectByParentId" resultMap="baseResultMap">
+        select *
+        from district
+        where parent_id = #{parentId}
+        order by `order` asc
+    </select>
+
+    <select id="selectByIdWithCascade" resultMap="cascadeResultMap">
+        select d.*,
+               p1.id        as p1_id,
+               p1.parent_id as p1_parent_id,
+               p1.name      as p1_name,
+               p1.suffix    as p1_suffix,
+               p2.id        as p2_id,
+               p2.parent_id as p2_parent_id,
+               p2.name      as p2_name,
+               p2.suffix    as p2_suffix
+        from district d
+                 left join district p1 on d.parent_id = p1.id
+                 left join district p2 on p1.parent_id = p2.id
+        where d.id = #{id}
+    </select>
+
+
+</mapper>

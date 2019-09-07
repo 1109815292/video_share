@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.AppUserVipDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.AppUserVip">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="vipTypeId" column="vipTypeId"/>
+        <result property="vipEffectiveTime" column="vipEffectiveTime"/>
+        <result property="vipDeadline" column="vipDeadline"/>
+        <result property="createdTime" column="createdTime"/>
+    </resultMap>
+
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into app_user_vip (userId, vipTypeId, vipEffectiveTime, vipDeadline, createdTime)
+        value (#{userId}, #{vipTypeId}, #{vipEffectiveTime}, #{vipDeadline}, #{createdTime})
+    </insert>
+
+    <select id="selectListByUserId" resultMap="baseResultMap">
+        select * from app_user_vip where userId = #{userId}
+    </select>
+</mapper>

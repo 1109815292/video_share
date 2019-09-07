@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.VideoDao">
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.Video">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="copyNo" column="copyNo"/>
+        <result property="coverImg" column="coverImg"/>
+        <result property="sourceUrl" column="sourceUrl"/>
+        <result property="videoUrl" column="videoUrl"/>
+        <result property="title" column="title"/>
+        <result property="tag" column="tag"/>
+        <result property="publicFlag" column="publicFlag"/>
+        <result property="sort" column="sort"/>
+        <result property="createdTime" column="createdTime"/>
+        <result property="viewCount" column="viewCount"/>
+        <result property="forwardCount" column="forwardCount"/>
+        <result property="peopleCount" column="peopleCount"/>
+        <result property="cachedFlag" column="cachedFlag"/>
+        <result property="sharedWords" column="sharedWords"/>
+        <result property="deletedAt" column="deletedAt"/>
+        <result property="type" column="type"/>
+        <result property="isTop" column="isTop"/>
+        <result property="advType" column="advType"/>
+        <result property="advIds" column="advIds"/>
+        <result property="showBtnType" column="showBtnType"/>
+        <result property="checkState" column="checkState"/>
+        <result property="checkStateRemark" column="checkStateRemark"/>
+        <result property="categoryId" column="categoryId"/>
+    </resultMap>
+
+    <resultMap id="cascadeResultMap" extends="baseResultMap" type="com.juheshi.video.entity.Video">
+        <association property="appUser" javaType="com.juheshi.video.entity.AppUser">
+            <id column="id" property="id"/>
+            <result column="copyNo" property="copyNo"/>
+            <result column="userName" property="userName"/>
+            <result column="headImg" property="headImg"/>
+            <result column="vipFlag" property="vipFlag"/>
+            <association property="userPage" javaType="com.juheshi.video.entity.AppUserPage">
+                <result column="pageName" property="pageName"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <resultMap id="cascadeCategoryResultMap" extends="baseResultMap" type="com.juheshi.video.entity.Video">
+        <association property="category" javaType="com.juheshi.video.entity.Category">
+            <id property="id" column="c_id"/>
+            <result property="name" column="c_name"/>
+        </association>
+    </resultMap>
+
+    <sql id="baseColumns">
+        ${alias}.*
+    </sql>
+
+    <sql id="appUserColumns">
+        ${alias}.userName,
+        ${alias}.copyNo,
+        ${alias}.headImg,
+        ${alias}.vipFlag
+    </sql>
+
+    <sql id="appUserPageColumns">
+        ${alias}.pageName
+    </sql>
+
+
+    <select id="count" resultType="long">
+        select count(1) from video
+        <where>
+            <if test="search != null and search !='' ">
+                and title LIKE '%${search}%'
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+            <if test="publicFlag != null and publicFlag !=''">
+                and publicFlag = #{publicFlag}
+            </if>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+            <if test="userId == null">
+                and viewCount > 3
+            </if>
+            <if test="types != null">
+                and type in
+                <foreach collection="types" item="type" index="index"
+                         open="(" close=")" separator=",">
+                    #{type}
+                </foreach>
+            </if>
+            <if test="checkState != null">
+                and checkState = #{checkState}
+            </if>
+            and deletedAt is null
+        </where>
+    </select>
+
+    <select id="pageSelectVideo" resultMap="baseResultMap">
+        select * from video
+        <where>
+            <if test="search != null and search !='' ">
+                and title LIKE '%${search}%'
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+            <if test="userId == null">
+                and viewCount > 3
+            </if>
+            <if test="publicFlag != null and publicFlag !=''">
+                and publicFlag = #{publicFlag}
+            </if>
+            <if test="types != null">
+                and type in
+                <foreach collection="types" item="type" index="index"
+                         open="(" close=")" separator=",">
+                    #{type}
+                </foreach>
+            </if>
+            <if test="checkState != null">
+                and checkState = #{checkState}
+            </if>
+            and deletedAt is null
+        </where>
+        order by createdTime desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select *
+        from video
+        where id = #{id}
+    </select>
+
+    <select id="countForDeleted">
+        select count(1)
+        from video
+        where deletedAt is not null
+    </select>
+
+    <select id="pageSelectVideoForDeleted">
+        select *
+        from video
+        where deletedAt is not null
+        order by deletedAt desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="selectByIds" resultMap="baseResultMap">
+        select * from video where id in
+        <foreach collection="ids" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectByUserIdWithIgnore" resultMap="cascadeResultMap">
+        select
+        <include refid="baseColumns">
+            <property name="alias" value="v"/>
+        </include>
+        ,
+        <include refid="appUserColumns">
+            <property name="alias" value="au"/>
+        </include>
+        ,
+        <include refid="appUserPageColumns">
+            <property name="alias" value="aup"/>
+        </include>
+        from video v
+        inner join app_user au on v.userId = au.id
+        inner join app_user_page aup on aup.userId = au.id
+        <where>
+            v.userId = #{userId}
+            <if test="ignoreIds != null">
+                and v.id not in
+                <foreach collection="ignoreIds" item="id" index="index" separator="," open="(" close=")">
+                    ${id}
+                </foreach>
+            </if>
+            <if test="publicFlag != null and publicFlag !=''">
+                and v.publicFlag = #{publicFlag}
+            </if>
+            and v.deletedAt is null
+        </where>
+        order by v.sort, v.createdTime desc
+        limit #{limit}
+    </select>
+
+    <select id="findVideoByStore" resultType="com.juheshi.video.entity.Video">
+        select *
+        from video
+        where advType = 2
+          and advIds = #{storeId}
+        order by id desc
+    </select>
+
+    <select id="findVideoByCategory" resultType="com.juheshi.video.entity.Video">
+        select * from video where categoryId = #{categoryId} order by viewCount desc
+        limit 0, 100
+    </select>
+
+    <insert id="save">
+        insert into video(userId, copyNo, coverImg, sourceUrl, videoUrl, title, tag, publicFlag, sort,
+        createdTime, viewCount, forwardCount, peopleCount, cachedFlag, sharedWords, `type`,
+        advType, advIds, showBtnType, checkState)
+        value (#{userId},#{copyNo}, #{coverImg}, #{sourceUrl}, #{videoUrl}, #{title}, #{tag}, #{publicFlag}, #{sort},
+        #{createdTime}, #{viewCount}, #{forwardCount}, #{peopleCount}, #{cachedFlag}, #{sharedWords}, #{type},
+        #{advType}, #{advIds}, #{showBtnType}, #{checkState})
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <insert id="saveBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into video
+        (id,userId,copyNo, coverImg, sourceUrl, videoUrl, title,
+        tag, publicFlag, sort, createdTime, viewCount, forwardCount,
+        peopleCount, cachedFlag, sharedWords, `type`, advType, advIds, showBtnType, checkState)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, #{item.userId},#{item.copyNo}, #{item.coverImg}, #{item.sourceUrl}, #{item.videoUrl},
+            #{item.title},
+            #{item.tag}, #{item.publicFlag}, #{item.sort},#{item.createdTime}, #{item.viewCount}, #{item.forwardCount},
+            #{item.peopleCount}, #{item.cachedFlag}, #{item.sharedWords}, #{item.type}, #{item.advType},
+            #{item.advIds},#{item.showBtnType}, #{item.checkState})
+        </foreach>
+    </insert>
+
+    <update id="modifyCoverImgById">
+        update video
+        set coverImg = #{coverImg}
+        where id = #{id}
+    </update>
+
+    <update id="modifyVideoUrlById">
+        update video
+        set videoUrl  = #{videoUrl},
+            cachedFlag='Y'
+        where id = #{id}
+    </update>
+
+    <update id="modifyVideo">
+        update video
+        <set>
+            <if test="title != null and title != '' ">
+                title = #{title},
+            </if>
+            <if test="tag != null and tag != '' ">
+                tag = #{tag},
+            </if>
+            <if test="publicFlag != null and publicFlag != '' ">
+                publicFlag = #{publicFlag},
+            </if>
+            <if test="showBtnType != null and showBtnType != '' ">
+                showBtnType = #{showBtnType},
+            </if>
+            <if test="sharedWords != null and sharedWords != '' ">
+                sharedWords = #{sharedWords},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
+            </if>
+            <if test="categoryId != null">
+                categoryId = #{categoryId},
+            </if>
+            advType = #{advType},
+            advIds = #{advIds},
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="modifyVideoForApp">
+        update video
+        <set>
+            <if test="title != null and title != '' ">
+                title = #{title},
+            </if>
+            <if test="tag != null and tag != '' ">
+                tag = #{tag},
+            </if>
+            <if test="publicFlag != null and publicFlag != '' ">
+                publicFlag = #{publicFlag},
+            </if>
+            <if test="showBtnType != null and showBtnType != '' ">
+                showBtnType = #{showBtnType},
+            </if>
+            <if test="sharedWords != null and sharedWords != '' ">
+                sharedWords = #{sharedWords},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
+            </if>
+            advType = #{advType},
+            advIds = #{advIds},
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <update id="modifyVideoCachedFlagBatch">
+        update video set cachedFlag = #{cachedFlag} where id in
+        <foreach collection="ids" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateForDeleteByIds">
+        update video set deletedAt = #{deletedAt} where id in
+        <foreach collection="ids" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="modifyVideoIsTop">
+        update video
+        set isTop = #{isTop}
+        where id = #{id}
+    </update>
+
+    <update id="modifyVideoViewCount">
+        update video
+        set viewCount = viewCount + 1
+        where id = #{id}
+    </update>
+
+    <update id="modifyVideoPeopleCount">
+        update video
+        set peopleCount = peopleCount + 1
+        where id = #{id}
+    </update>
+
+    <update id="modifyVideoForwardCount">
+        update video
+        set forwardCount = forwardCount + 1
+        where id = #{id}
+    </update>
+
+
+    <delete id="deleteById">
+        delete
+        from video
+        where id = #{id}
+    </delete>
+
+
+    <select id="countWithIgnoreIds" resultType="long">
+        select count(1)
+        from video v
+        inner join app_user au on v.userId = au.id
+        inner join app_user_page aup on aup.userId = au.id
+        <where>
+            <if test="userId != null">
+                and v.userId = #{userId}
+            </if>
+            <if test="userId == null">
+                and v.viewCount > 3
+            </if>
+            <if test="ignoreIds != null">
+                and v.id not in
+                <foreach collection="ignoreIds" item="id" index="index" separator="," open="(" close=")">
+                    ${id}
+                </foreach>
+            </if>
+            <if test="publicFlag != null and publicFlag !=''">
+                and v.publicFlag = #{publicFlag}
+            </if>
+            and v.deletedAt is null
+        </where>
+        order by v.sort, v.createdTime desc
+    </select>
+
+    <select id="pageSelectByParamWithIgnore" resultMap="cascadeResultMap">
+        select
+        <include refid="baseColumns">
+            <property name="alias" value="v"/>
+        </include>
+        ,
+        <include refid="appUserColumns">
+            <property name="alias" value="au"/>
+        </include>
+        ,
+        <include refid="appUserPageColumns">
+            <property name="alias" value="aup"/>
+        </include>
+        from video v
+        inner join app_user au on v.userId = au.id
+        inner join app_user_page aup on aup.userId = au.id
+        <where>
+            <if test="userId != null">
+                and v.userId = #{userId}
+            </if>
+            <if test="userId == null">
+                and v.viewCount > 3
+            </if>
+            <if test="ignoreIds != null">
+                and v.id not in
+                <foreach collection="ignoreIds" item="id" index="index" separator="," open="(" close=")">
+                    ${id}
+                </foreach>
+            </if>
+            <if test="publicFlag != null and publicFlag !=''">
+                and v.publicFlag = #{publicFlag}
+            </if>
+            and v.deletedAt is null
+        </where>
+        order by v.createdTime desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <update id="modifyVideoCheckStateById">
+        update video
+        <set>
+            <if test="checkState != null">
+                checkState = #{checkState},
+            </if>
+            <if test="checkStateRemark != null and checkStateRemark != ''">
+                checkStateRemark = #{checkStateRemark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="modifyVideoCheckStateByIds">
+        update video
+        <set>
+            <if test="checkState != null">
+                checkState = #{checkState},
+            </if>
+        </set>
+        where id in
+        <foreach collection="ids" item="id" index="index" separator="," open="(" close=")">
+            ${id}
+        </foreach>
+    </update>
+
+
+    <select id="countForAdmin" resultType="long">
+        select count(1) from video
+        <where>
+            <if test="search != null and search !='' ">
+                and title LIKE '%${search}%'
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+            <if test="publicFlag != null and publicFlag !=''">
+                and publicFlag = #{publicFlag}
+            </if>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+            <if test="types != null">
+                and type in
+                <foreach collection="types" item="type" index="index"
+                         open="(" close=")" separator=",">
+                    #{type}
+                </foreach>
+            </if>
+            <if test="checkState != null">
+                and checkState = #{checkState}
+            </if>
+            and deletedAt is null
+        </where>
+    </select>
+
+    <select id="pageSelectVideoForAdmin" resultMap="cascadeCategoryResultMap">
+        select v.*,
+        c.id as c_id,
+        c.name as c_name
+        from video v
+        left join category c on v.categoryId = c.id
+        <where>
+            <if test="search != null and search !='' ">
+                and v.title LIKE '%${search}%'
+            </if>
+            <if test="type != null">
+                and v.`type` = #{type}
+            </if>
+            <if test="userId != null">
+                and v.userId = #{userId}
+            </if>
+            <if test="publicFlag != null and publicFlag !=''">
+                and v.publicFlag = #{publicFlag}
+            </if>
+            <if test="types != null">
+                and v.type in
+                <foreach collection="types" item="type" index="index"
+                         open="(" close=")" separator=",">
+                    #{type}
+                </foreach>
+            </if>
+            <if test="checkState != null">
+                and v.checkState = #{checkState}
+            </if>
+            <if test="categoryId != null">
+                <if test="categoryId == -1">
+                    and v.categoryId is null
+                </if>
+                <if test="categoryId >= 0">
+                    and v.categoryId = #{categoryId}
+                </if>
+            </if>
+            and v.deletedAt is null
+        </where>
+        order by v.createdTime desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <update id="modifyVideoCategoryId">
+        update video set categoryId = #{categoryId} where id = #{id}
+    </update>
+</mapper>

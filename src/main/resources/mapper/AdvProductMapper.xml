@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.AdvProductDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.AdvProduct">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="productName" column="productName"/>
+        <result property="price" column="price"/>
+        <result property="productUrl" column="productUrl"/>
+        <result property="picUrl" column="picUrl"/>
+        <result property="watchword" column="watchword"/>
+        <result property="type" column="type"/>
+        <result property="sort" column="sort"/>
+        <result property="viewCount" column="viewCount"/>
+        <result property="peopleCount" column="peopleCount"/>
+        <result property="couponPrice" column="couponPrice" />
+    </resultMap>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from adv_product where id = #{id}
+    </select>
+
+    <select id="selectListByParam" resultMap="baseResultMap">
+        select * from adv_product
+        <where>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+            <if test="keywords != null and keywords != ''">
+                and productName like '%${keywords}%'
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into adv_product (userId, productName, price, productUrl, picUrl, watchword, `type`, sort, viewCount,peopleCount, couponPrice)
+        value (#{userId}, #{productName}, #{price}, #{productUrl}, #{picUrl}, #{watchword}, #{type}, #{sort}, #{viewCount},#{peopleCount}, #{couponPrice})
+    </insert>
+
+    <update id="modifyProduct">
+        update adv_product
+        <set>
+          <if test="productName != null and productName != ''">
+              productName = #{productName},
+          </if>
+          <if test="price != null">
+              price = #{price},
+          </if>
+            <if test="couponPrice != null">
+                couponPrice = #{couponPrice},
+            </if>
+          <if test="productUrl != null and productUrl != ''">
+              productUrl = #{productUrl},
+          </if>
+          <if test="picUrl != null and picUrl != ''">
+              picUrl = #{picUrl},
+          </if>
+          <if test="watchword != null and watchword != ''">
+              watchword = #{watchword},
+          </if>
+          <if test="sort != null">
+              sort = #{sort},
+          </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="modifyProductViewCountById">
+      update adv_product set viewCount = viewCount + 1 where id = #{id}
+    </update>
+
+    <update id="modifyProductPeopleCountById">
+      update adv_product set peopleCount = peopleCount + 1 where id = #{id}
+    </update>
+
+
+    <delete id="deleteById">
+        delete from adv_product where id = #{id}
+    </delete>
+
+    <select id="selectByIds" resultMap="baseResultMap">
+        select * from adv_product where id in
+        <foreach collection="ids" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

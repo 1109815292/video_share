@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.SeckillOrderDao">
+
+    <sql id="ressult">
+        o.id as id,
+        o.seckill_id as seckillId,
+        o.money as money,
+        o.centre_money as centreMoney,
+        o.shop_money as shopMoney,
+        o.user_id as userId,
+        o.store_id as storeId,
+        o.create_time as createTime,
+        o.pay_time as payTime,
+        o.status as status,
+        o.receiver_address as receiverAddress,
+        o.receiver_mobile as receiverMobile,
+        o.receiver as receiver,
+        o.transaction_id as transactionId,
+        o.examine as examine,
+        o.examine_time as examinetime,
+        o.is_cost as isCost,
+        o.main_order as mainOrder
+    </sql>
+
+    <select id="findOneSeckillOrder" resultType="com.juheshi.video.entity.SeckillOrder" parameterType="com.juheshi.video.entity.SeckillOrder">
+        select
+        <include refid="ressult"/>
+        from seckill_order o
+        <where>
+
+        </where>
+    </select>
+
+    <select id="listSeckillOrder" resultType="com.juheshi.video.entity.SeckillOrder" parameterType="com.juheshi.video.entity.SeckillOrder">
+        select
+        <include refid="ressult"/>
+        ,g.small_pic as smallPic
+        ,g.consume_time as consumeTime
+        from seckill_order o
+        LEFT JOIN seckill_goods g on o.seckill_id = g.id
+        <where>
+            <if test="id != null and id != ''">
+                and o.id = #{id}
+            </if>
+            <if test="seckillId != null and seckillId != ''">
+                and o.seckill_id = #{seckillId}
+            </if>
+            <if test="examine != null and examine != ''">
+                and o.examine = #{examine}
+            </if>
+            <if test="status != null and status != ''">
+                and o.status = #{status}
+            </if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">
+                and o.create_time &gt;= #{createTimeBegin}
+            </if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">
+                and o.create_time &lt;= #{createTimeEnd}
+            </if>
+            <if test="examineTimeBegin != null and examineTimeBegin != ''">
+                and o.examine_time &gt;= #{examineTimeBegin}
+            </if>
+            <if test="examineTimeEnd != null and examineTimeEnd != ''">
+                and o.examine_time &lt;= #{examineTimeEnd}
+            </if>
+            <if test="consumeTimeBegin != null and consumeTimeBegin != ''">
+                and g.consume_time &gt;= #{consumeTimeBegin}
+            </if>
+            <if test="consumeTimeEnd != null and consumeTimeEnd != ''">
+                and g.consume_time &lt;= #{consumeTimeEnd}
+            </if>
+        </where>
+        order by o.create_time desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="listSeckillOrderNum" resultType="java.lang.Integer" parameterType="com.juheshi.video.entity.SeckillOrder">
+        select
+        count(1)
+        from seckill_order
+        LEFT JOIN seckill_goods g on o.seckill_id = g.id
+        <where>
+            <if test="id != null and id != ''">
+                and o.id = #{id}
+            </if>
+            <if test="seckillId != null and seckillId != ''">
+                and o.seckill_id = #{seckillId}
+            </if>
+            <if test="examine != null and examine != ''">
+                and o.examine = #{examine}
+            </if>
+            <if test="status != null and status != ''">
+                and o.status = #{status}
+            </if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">
+                and o.create_time &gt;= #{createTimeBegin}
+            </if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">
+                and o.create_time &lt;= #{createTimeEnd}
+            </if>
+            <if test="examineTimeBegin != null and examineTimeBegin != ''">
+                and o.examine_time &gt;= #{examineTimeBegin}
+            </if>
+            <if test="examineTimeEnd != null and examineTimeEnd != ''">
+                and o.examine_time &lt;= #{examineTimeEnd}
+            </if>
+            <if test="consumeTimeBegin != null and consumeTimeBegin != ''">
+                and g.consume_time &gt;= #{consumeTimeBegin}
+            </if>
+            <if test="consumeTimeEnd != null and consumeTimeEnd != ''">
+                and g.consume_time &lt;= #{consumeTimeEnd}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertSeckillOrder" useGeneratedKeys="true" keyProperty="id" parameterType="com.juheshi.video.entity.SeckillOrder">
+        insert into seckill_order (
+                    seckill_id,
+                    money,
+                    centre_money,
+                    shop_money,
+                    user_id,
+                    store_id,
+                    create_time,
+                    pay_time,
+                    status,
+                    receiver_address,
+                    receiver_mobile,
+                    receiver,
+                    transaction_id,
+                    examine,
+                    examine_time,
+                    is_cost,
+                    main_order
+                    ) values (
+                    #{seckillId},
+                    #{money},
+                    #{centreMoney},
+                    #{shopMoney},
+                    #{userId},
+                    #{storeId},
+                    #{createTime},
+                    #{payTime},
+                    #{status},
+                    #{receiverAddress},
+                    #{receiverMobile},
+                    #{receiver},
+                    #{transactionId},
+                    #{examine},
+                    #{examineTime},
+                    #{isCost},
+                    #{mainOrder}
+                    )
+    </insert>
+
+    <update id="updateSeckillOrder" parameterType="com.juheshi.video.entity.SeckillOrder">
+        update seckill_order set
+            seckill_id = #{seckillId},
+            money = #{money},
+            centre_money = #{centreMoney},
+            shop_money = #{shopMoney},
+            user_id = #{userId},
+            store_id = #{storeId},
+            create_time = #{createTime},
+            pay_time = #{payTime},
+            status = #{status},
+            receiver_address = #{receiverAddress},
+            receiver_mobile = #{receiverMobile},
+            receiver = #{receiver},
+            transaction_id = #{transactionId},
+            examine = #{examine},
+            examine_time = #{examineTime},
+            is_cost = #{isCost},
+            main_order = #{mainOrder}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSeckillOrder" parameterType="java.lang.Integer">
+        delete from seckill_order where id = #{id}
+    </delete>
+</mapper>

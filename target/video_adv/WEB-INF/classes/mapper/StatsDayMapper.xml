@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.StatsDayDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.StatsDay">
+        <result property="statsYear" column="statsYear"/>
+        <result property="statsMonth" column="statsMonth"/>
+        <result property="statsDay" column="statsDay"/>
+        <result property="newUserCount" column="newUserCount"/>
+        <result property="dailyFlow" column="dailyFlow"/>
+        <result property="activeUserCount" column="activeUserCount"/>
+        <result property="cashAmount" column="cashAmount"/>
+        <result property="createdTime" column="createdTime"/>
+    </resultMap>
+
+    <insert id="save">
+       insert into stats_day(statsYear, statsMonth, statsDay, newUserCount, dailyFlow,
+              activeUserCount, cashAmount, createdTime)
+       value (#{statsYear}, #{statsMonth}, #{statsDay}, #{newUserCount}, #{dailyFlow},
+              #{activeUserCount}, #{cashAmount}, #{createdTime})
+   </insert>
+
+    <select id="selectByYearMonthDay" resultMap="baseResultMap">
+        select * from stats_day where statsYear = #{statsYear} and statsMonth = #{statsMonth} and statsDay = #{statsDay}
+    </select>
+
+    <select id="selectSumByParam" resultMap="baseResultMap">
+
+        select sum(newUserCount) as newUserCount, sum(dailyFlow) as dailyFlow , sum(activeUserCount) as activeUserCount, sum(cashAmount) as cashAmount
+        from stats_day
+        <where>
+            <if test="statsYear != null">
+                and statsYear = #{statsYear}
+            </if>
+            <if test="statsMonth != null">
+                and statsMonth = #{statsMonth}
+            </if>
+            <if test="statsDay != null">
+                and statsDay = #{statsDay}
+            </if>
+        </where>
+    </select>
+
+    <select id="checkExists" resultType="int">
+        select count(1) from stats_day where statsYear = #{statsYear} and statsMonth = #{statsMonth} and statsDay = #{statsDay}
+    </select>
+    <update id="update">
+        update stats_day
+          <set>
+              <if test="newUserCount != null and newUserCount > 0">
+                  newUserCount = newUserCount + #{newUserCount},
+              </if>
+              <if test="dailyFlow != null and dailyFlow > 0">
+                  dailyFlow = dailyFlow + #{dailyFlow},
+              </if>
+              <if test="activeUserCount != null and activeUserCount > 0">
+                  activeUserCount = activeUserCount + #{activeUserCount},
+              </if>
+              <if test="cashAmount != null and cashAmount > 0">
+                  cashAmount = cashAmount + #{cashAmount},
+              </if>
+          </set>
+          where statsYear = #{statsYear} and statsMonth = #{statsMonth} and statsDay = #{statsDay}
+    </update>
+</mapper>

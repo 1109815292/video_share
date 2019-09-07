@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.AppUserDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.AppUser">
+        <id property="id" column="id"/>
+        <result property="copyNo" column="copyNo"/>
+        <result property="openId" column="openId"/>
+        <result property="unionId" column="unionId"/>
+        <result property="userName" column="userName"/>
+        <result property="headImg" column="headImg"/>
+        <result property="gender" column="gender"/>
+        <result property="createdTime" column="createdTime"/>
+        <result property="vipFlag" column="vipFlag"/>
+        <result property="vipDeadline" column="vipDeadline"/>
+        <result property="publishFlag" column="publishFlag"/>
+        <result property="state" column="state"/>
+        <result property="inviteId" column="inviteId"/>
+        <result property="inviteCopyNo" column="inviteCopyNo"/>
+        <result property="amount" column="amount"/>
+        <result property="adminFlag" column="adminFlag"/>
+        <result property="deletedAt" column="deletedAt"/>
+        <result property="inviteQRCode" column="inviteQRCode"/>
+        <result property="inviteQRCodeExpiresIn" column="inviteQRCodeExpiresIn"/>
+        <result property="lastViewTime" column="lastViewTime"/>
+        <result property="subscribeFlag" column="subscribeFlag" />
+        <result property="fansCount" column="fansCount" />
+        <result property="fansOfFansCount" column="fansOfFansCount" />
+        <result property="fansVipCount" column="fansVipCount" />
+        <result property="income" column="income" />
+        <result property="userLevel" column="userLevel"/>
+        <result property="subscribeFlag" column="subscribeFlag"/>
+        <result property="city" column="city" />
+        <result property="stationFlag" column="stationFlag" />
+        <result property="vipType" column="vipType" />
+        <association property="userPage" javaType="com.juheshi.video.entity.AppUserPage">
+            <id property="userId" column="id"/>
+            <result property="wxQRCode" column="wxQRCode"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="cascadeWithInviterResultMap" type="com.juheshi.video.entity.AppUser">
+        <id property="id" column="id"/>
+        <result property="copyNo" column="copyNo"/>
+        <result property="openId" column="openId"/>
+        <result property="unionId" column="unionId"/>
+        <result property="userName" column="userName"/>
+        <result property="headImg" column="headImg"/>
+        <result property="gender" column="gender"/>
+        <result property="createdTime" column="createdTime"/>
+        <result property="vipFlag" column="vipFlag"/>
+        <result property="vipDeadline" column="vipDeadline"/>
+        <result property="publishFlag" column="publishFlag"/>
+        <result property="state" column="state"/>
+        <result property="inviteId" column="inviteId"/>
+        <result property="inviteCopyNo" column="inviteCopyNo"/>
+        <result property="amount" column="amount"/>
+        <result property="adminFlag" column="adminFlag"/>
+        <result property="deletedAt" column="deletedAt"/>
+        <result property="inviteQRCode" column="inviteQRCode"/>
+        <result property="inviteQRCodeExpiresIn" column="inviteQRCodeExpiresIn"/>
+        <result property="lastViewTime" column="lastViewTime"/>
+        <result property="subscribeFlag" column="subscribeFlag" />
+        <result property="fansCount" column="fansCount" />
+        <result property="fansOfFansCount" column="fansOfFansCount" />
+        <result property="fansVipCount" column="fansVipCount" />
+        <result property="income" column="income" />
+        <result property="userLevel" column="userLevel"/>
+        <result property="subscribeFlag" column="subscribeFlag"/>
+        <result property="city" column="city" />
+        <result property="stationFlag" column="stationFlag" />
+        <result property="vipType" column="vipType" />
+        <association property="inviter" javaType="com.juheshi.video.entity.AppUser">
+            <id property="id" column="i_id" />
+            <result property="copyNo" column="i_copyNo"/>
+            <result property="userName" column="i_userName"/>
+            <result property="headImg" column="i_headImg"/>
+            <result property="openId" column="i_openId"/>
+        </association>
+    </resultMap>
+
+    <select id="checkCopyNo" resultType="java.lang.Integer">
+        select count(1) from app_user where copyNo=#{copyNo}
+    </select>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from app_user where id = #{id}
+    </select>
+
+    <select id="selectOneByParam" resultMap="baseResultMap">
+        select * from app_user
+        <where>
+            <if test="openId != null and openId !='' ">
+                and openId = #{openId}
+            </if>
+            <if test="copyNo != null and copyNo !='' ">
+                and copyNo = #{copyNo}
+            </if>
+            and deletedAt is null
+        </where>
+    </select>
+
+    <select id="selectByParam" resultMap="baseResultMap">
+        select * from app_user
+        <where>
+            <if test="search != null and search !='' ">
+                and (copyNo LIKE '%${search}%' or userName LIKE '%${search}%')
+            </if>
+            <if test="adminFlag != null and adminFlag !='' ">
+                and adminFlag = #{adminFlag}
+            </if>
+            <if test="inviteId != null">
+                and inviteId = #{inviteId}
+            </if>
+            <if test="inviteCopyNo != null and inviteCopyNo!=''">
+                and inviteCopyNo = #{inviteCopyNo}
+            </if>
+            <if test="vipFlag != null and vipFlag !='' ">
+                and vipFlag = #{vipFlag}
+            </if>
+            and deletedAt is null
+        </where>
+    </select>
+
+    <select id="count" resultType="long">
+        select count(1) from app_user
+        <where>
+            <if test="search != null and search !='' ">
+                and (copyNo LIKE '%${search}%' or userName LIKE '%${search}%')
+            </if>
+            <if test="adminFlag != null and adminFlag !='' ">
+                and adminFlag = #{adminFlag}
+            </if>
+            <if test="vipFlag != null and vipFlag !='' ">
+                and vipFlag = #{vipFlag}
+            </if>
+            <if test="inviteId != null">
+                and inviteId = #{inviteId}
+            </if>
+            <if test="inviteCopyNo != null and inviteCopyNo!=''">
+                and inviteCopyNo = #{inviteCopyNo}
+            </if>
+            <if test="vipType != null">
+                and vipType = #{vipType}
+            </if>
+            <if test="stationFlag != null and stationFlag != ''">
+                and stationFlag = #{stationFlag}
+            </if>
+            and deletedAt is null
+        </where>
+    </select>
+
+    <select id="pageSelectByParam" resultMap="baseResultMap">
+        select a.*, b.wxQRCode from app_user a left join app_user_page b on a.id = b.userId
+        <where>
+            <if test="search != null and search !='' ">
+                and (a.copyNo LIKE '%${search}%' or a.userName LIKE '%${search}%')
+            </if>
+            <if test="adminFlag != null and adminFlag !='' ">
+                and a.adminFlag = #{adminFlag}
+            </if>
+            <if test="vipFlag != null and vipFlag !='' ">
+                and a.vipFlag = #{vipFlag}
+            </if>
+            <if test="inviteId != null">
+                and a.inviteId = #{inviteId}
+            </if>
+            <if test="inviteCopyNo != null and inviteCopyNo!=''">
+                and a.inviteCopyNo = #{inviteCopyNo}
+            </if>
+            <if test="vipType != null">
+                and a.vipType = #{vipType}
+            </if>
+            <if test="stationFlag != null and stationFlag != ''">
+                and a.stationFlag = #{stationFlag}
+            </if>
+            and a.deletedAt is null
+        </where>
+        order by a.lastViewTime desc, a.createdTime desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="pageSelectByParamWithInviter" resultMap="cascadeWithInviterResultMap">
+        select a.*,
+        b.id as i_id,
+        b.copyNo as i_copyNo,
+        b.userName as i_userName,
+        b.headImg as i_headImg,
+        b.openId as i_openId
+        from app_user a left join app_user b on a.inviteId = b.id
+        <where>
+            <if test="search != null and search !='' ">
+                and (a.copyNo LIKE '%${search}%' or a.userName LIKE '%${search}%')
+            </if>
+            <if test="adminFlag != null and adminFlag !='' ">
+                and a.adminFlag = #{adminFlag}
+            </if>
+            <if test="vipFlag != null and vipFlag !='' ">
+                and a.vipFlag = #{vipFlag}
+            </if>
+            <if test="inviteId != null">
+                and a.inviteId = #{inviteId}
+            </if>
+            <if test="inviteCopyNo != null and inviteCopyNo!=''">
+                and a.inviteCopyNo = #{inviteCopyNo}
+            </if>
+            <if test="vipType != null">
+                and a.vipType = #{vipType}
+            </if>
+            <if test="stationFlag != null and stationFlag != ''">
+                and a.stationFlag = #{stationFlag}
+            </if>
+
+            and a.deletedAt is null
+        </where>
+        order by a.lastViewTime desc, a.createdTime desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="findFansOfFans" resultMap="baseResultMap">
+        select a.*, b.wxQRCode from app_user a left join app_user_page b on a.id = b.userId
+        <where>
+            <if test="search != null and search !='' ">
+                and (a.copyNo LIKE '%${search}%' or a.userName LIKE '%${search}%')
+            </if>
+            <if test="inviteId != null">
+                and a.inviteCopyNo in (select copyNo from app_user where inviteId = #{inviteId})
+            </if>
+            and a.deletedAt is null
+        </where>
+        order by a.lastViewTime desc, a.createdTime desc
+        limit #{limit} offset #{offset}
+    </select>
+    <select id="countFansOfFans" resultType="long">
+        select count(1) from app_user
+        <where>
+            <if test="search != null and search !='' ">
+                and (copyNo LIKE '%${search}%' or userName LIKE '%${search}%')
+            </if>
+            <if test="inviteId != null">
+                and inviteCopyNo in (select copyNo from app_user where inviteId = #{inviteId})
+            </if>
+            and deletedAt is null
+        </where>
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into app_user (copyNo, openId, unionId, userName, headImg, gender, createdTime,
+        vipFlag, vipDeadline, publishFlag, state, inviteId,inviteCopyNo, amount, lastViewTime,
+                              userLevel,subscribeFlag, city, stationFlag)
+        value (#{copyNo}, #{openId}, #{unionId}, #{userName}, #{headImg}, #{gender}, #{createdTime},
+        #{vipFlag}, #{vipDeadline}, #{publishFlag}, #{state}, #{inviteId},#{inviteCopyNo}, #{amount}, #{lastViewTime},
+         #{userLevel},#{subscribeFlag}, #{city}, #{stationFlag})
+    </insert>
+
+    <update id="modifyUserHeadImgById">
+        update app_user set headImg = #{headImg} where id = #{id}
+    </update>
+
+    <update id="modifyUserPublishFlag">
+        update app_user set publishFlag = #{publishFlag} where id = #{id}
+    </update>
+
+    <update id="modifyUserAdminFlag">
+        update app_user set adminFlag = #{adminFlag} where id = #{id}
+    </update>
+
+    <update id="modifyUserStationFlag">
+        update app_user set stationFlag = #{stationFlag} where id = #{id}
+    </update>
+
+    <update id="modifyUserState">
+         update app_user set state = #{state} where id = #{id}
+    </update>
+
+    <update id="modifyUserVip">
+        update app_user set vipFlag= #{vipFlag}, vipDeadline=#{vipDeadline}, vipType=#{vipType} where id= #{id}
+    </update>
+
+    <update id="modifyUserInviteQRCode">
+        update app_user set inviteQRCode = #{inviteQRCode}, inviteQRCodeExpiresIn=#{inviteQRCodeExpiresIn} where id = #{id}
+    </update>
+
+    <update id="modifyUserLastViewTime">
+        update app_user set lastViewTime = #{lastViewTime} where id = #{id}
+    </update>
+
+    <update id="modifyUserSubscribeFlag">
+        update app_user set subscribeFlag = #{subscribeFlag} where id = #{id}
+    </update>
+
+    <update id="modifyUserLevel">
+        update app_user set userLevel = #{userLevel} where id = #{id}
+    </update>
+
+
+    <update id="modifyVipFlagForTask">
+        <![CDATA[ update app_user set vipFlag = #{vipFlagTo} where vipFlag = #{vipFlagFrom} and vipDeadline <= #{today} ]]>
+    </update>
+
+    <select id="selectForTask" resultMap="baseResultMap">
+        <![CDATA[ select * from app_user where vipFlag = #{vipFlag} and vipDeadline is not null and vipDeadline <= #{today} ]]>
+    </select>
+
+    <update id="modifyVipFlagForTask2">
+        update app_user set vipFlag = #{vipFlag} where id in
+        <foreach collection="ids" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="modifyFansVipCountForTask">
+        update app_user set fansVipCount = fansVipCount - 1 where fansVipCount > 0 and id in
+        <foreach collection="ids" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+
+    <select id="selectAllUserCount" resultType="long">
+        select count(1) from app_user
+    </select>
+
+    <update id="modifyUserFansCount">
+        update app_user set fansCount = fansCount + 1 where id = #{id}
+    </update>
+    <update id="modifyUserFansOfFansCount">
+         update app_user set fansOfFansCount = fansOfFansCount + 1 where id = #{id}
+    </update>
+    <update id="modifyUserFansVipCount">
+        update app_user set fansVipCount = fansVipCount + #{num} where id = #{id}
+    </update>
+    <update id="modifyUserIncome">
+        update app_user set income = ifnull(income,0) + #{income} where id = #{id}
+    </update>
+
+    <update id="modifyUserClearInviter">
+        update app_user set inviteId = null , inviteCopyNo = null where id = #{id}
+    </update>
+
+    <update id="modifyUserInviter">
+        update app_user set inviteId = #{inviteId}, inviteCopyNo = #{inviteCopyNo} where id = #{id}
+    </update>
+</mapper>

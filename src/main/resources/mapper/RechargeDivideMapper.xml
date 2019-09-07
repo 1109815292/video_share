@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.RechargeDivideDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.RechargeDivide">
+        <id property="id" column="id" />
+        <result property="userId" column="userId" />
+        <result property="rechargeAmount" column="rechargeAmount" />
+        <result property="divideUserId" column="divideUserId" />
+        <result property="divideAmount" column="divideAmount" />
+        <result property="createdTime" column="createdTime" />
+        <result property="fansId" column="fansId" />
+        <result property="payFlag" column="payFlag" />
+    </resultMap>
+
+    <resultMap id="divideResultMap" type="map">
+        <id property="id" column="id" />
+        <result property="userId" column="userId" />
+        <result property="rechargeAmount" column="rechargeAmount" />
+        <result property="divideUserId" column="divideUserId" />
+        <result property="divideAmount" column="divideAmount" />
+        <result property="createdTime" column="createdTime" />
+        <association property="fansUser" javaType="com.juheshi.video.entity.AppUser">
+            <id property="id" column="fansId" />
+            <result property="headImg" column="headImg" />
+            <result property="userName" column="userName" />
+        </association>
+    </resultMap>
+
+    <resultMap id="cascadeResultMap" type="com.juheshi.video.entity.RechargeDivide">
+        <id property="id" column="id" />
+        <result property="userId" column="userId" />
+        <result property="rechargeAmount" column="rechargeAmount" />
+        <result property="divideUserId" column="divideUserId" />
+        <result property="divideAmount" column="divideAmount" />
+        <result property="createdTime" column="createdTime" />
+        <result property="fansId" column="fansId" />
+        <result property="payFlag" column="payFlag" />
+        <association property="appUser" javaType="com.juheshi.video.entity.AppUser">
+            <id property="id" column="id1" />
+            <result property="headImg" column="headImg1" />
+            <result property="userName" column="userName1" />
+            <result property="copyNo" column="copyNo1" />
+        </association>
+        <association property="fansUser" javaType="com.juheshi.video.entity.AppUser">
+            <id property="id" column="id2" />
+            <result property="headImg" column="headImg2" />
+            <result property="userName" column="userName2" />
+            <result property="copyNo" column="copyNo2" />
+        </association>
+        <association property="divideUser" javaType="com.juheshi.video.entity.AppUser">
+            <id property="id" column="id3" />
+            <result property="headImg" column="headImg3" />
+            <result property="userName" column="userName3" />
+            <result property="copyNo" column="copyNo3" />
+        </association>
+    </resultMap>
+
+    <select id="findById" resultMap="baseResultMap">
+        select * from recharge_divide where id = #{id}
+    </select>
+
+    <select id="findAllDivideRate" resultType="com.juheshi.video.entity.DivideRate">
+        select * from divide_rate order by dividelevel
+    </select>
+
+    <select id="findDivideByDivideUser" parameterType="int" resultMap="divideResultMap">
+        select a.*,b.headImg, b.userName from recharge_divide a, app_user b where a.fansId = b.id and divideUserId = #{userId}
+        order by createdTime desc
+    </select>
+
+    <select id="countDivide" parameterType="map" resultType="java.lang.Double">
+        select sum(ifnull(divideAmount, 0)) as amount from recharge_divide where divideUserId = #{userId}
+        <if test="sdate != null">
+            and date(createdTime) between #{sdate} and #{edate}
+        </if>
+    </select>
+
+    <insert id="insertRechargeDivide" parameterType="com.juheshi.video.entity.RechargeDivide" useGeneratedKeys="true" keyProperty="id">
+        insert into recharge_divide (userId, rechargeAmount, divideUserId, divideAmount, createdTime, fansId, payFlag)
+        values (#{userId}, #{rechargeAmount}, #{divideUserId}, #{divideAmount}, #{createdTime}, #{fansId}, #{payFlag})
+    </insert>
+
+    <update id="updateRechargeDivide" parameterType="com.juheshi.video.entity.RechargeDivide">
+        update recharge_divide
+        <set>
+            <if test="userId != null">userId = #{userId},</if>
+            <if test="rechargeAmount != null">rechargeAmount = #{rechargeAmount},</if>
+            <if test="divideUserId != null">divideUserId = #{divideUserId},</if>
+            <if test="divideAmount != null">divideAmount = #{divideAmount},</if>
+            <if test="createdTime != null">createdTime = #{createdTime},</if>
+            <if test="fansId != null">fansId = #{fansId},</if>
+            <if test="payFlag != null">payFlag = #{payFlag},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <select id="countForPageSelectByParamWithCascade" resultType="long">
+        select
+          count(1)
+        from recharge_divide rd
+        inner join app_user au1 on rd.userId = au1.id
+        inner join app_user au2 on rd.fansId = au2.id
+        inner join app_user au3 on rd.divideUserId = au3.id
+        <where>
+            <if test="divideUserId != null">
+                and divideUserId = #{divideUserId}
+            </if>
+            <if test="fansId">
+                and fansId = #{fansId}
+            </if>
+            <if test="payFlag != null">
+                and rd.payFlag = #{payFlag}
+            </if>
+            <if test="dateFrom != null">
+               <![CDATA[  and rd.createdTime >= #{dateFrom}  ]]>
+            </if>
+            <if test="dateTo != null">
+                <![CDATA[  and rd.createdTime <= #{dateTo}  ]]>
+            </if>
+            <if test="minUserLevel != null">
+                and au3.userLevel >= #{minUserLevel}
+            </if>
+        </where>
+    </select>
+
+
+    <sql id="baseColumns">
+         ${alias}.*
+    </sql>
+
+    <sql id="appUserColumns">
+        ${alias}.id as id1, ${alias}.userName as userName1, ${alias}.copyNo as copyNo1, ${alias}.headImg as headImg1
+    </sql>
+
+    <sql id="fansUserColumns">
+        ${alias}.id as id2, ${alias}.userName as userName2, ${alias}.copyNo as copyNo2, ${alias}.headImg as headImg2
+    </sql>
+
+    <sql id="divideColumns">
+        ${alias}.id as id3, ${alias}.userName as userName3, ${alias}.copyNo as copyNo3, ${alias}.headImg as headImg3
+    </sql>
+
+    <select id="pageSelectByParamWithCascade" resultMap="cascadeResultMap">
+        select
+        <include refid="baseColumns">
+            <property name="alias" value="rd"/>
+        </include>
+        ,
+        <include refid="appUserColumns">
+            <property name="alias" value="au1"/>
+        </include>
+        ,
+        <include refid="fansUserColumns">
+            <property name="alias" value="au2"/>
+        </include>
+        ,
+        <include refid="divideColumns">
+            <property name="alias" value="au3"/>
+        </include>
+        from recharge_divide rd
+        inner join app_user au1 on rd.userId = au1.id
+        inner join app_user au2 on rd.fansId = au2.id
+        inner join app_user au3 on rd.divideUserId = au3.id
+        <where>
+            <if test="divideUserId != null">
+                and rd.divideUserId = #{divideUserId}
+            </if>
+            <if test="fansId != null">
+                and rd.fansId = #{fansId}
+            </if>
+            <if test="payFlag != null">
+                and rd.payFlag = #{payFlag}
+            </if>
+            <if test="dateFrom != null">
+                <![CDATA[  and rd.createdTime >= #{dateFrom}  ]]>
+            </if>
+            <if test="dateTo != null">
+                <![CDATA[  and rd.createdTime <= #{dateTo}  ]]>
+            </if>
+            <if test="minUserLevel != null">
+                and au3.userLevel >= #{minUserLevel}
+            </if>
+        </where>
+        order by rd.createdTime desc
+        limit #{limit} offset #{offset}
+    </select>
+</mapper>

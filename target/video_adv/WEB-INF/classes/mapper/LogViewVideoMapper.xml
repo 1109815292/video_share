@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.LogViewVideoDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.LogViewVideo">
+        <id property="id" column="id"/>
+        <result property="videoId" column="videoId"/>
+        <result property="userId" column="userId"/>
+        <result property="createdTime" column="createdTime"/>
+    </resultMap>
+
+    <resultMap id="videoViewLogResultMap" type="map">
+        <id property="id" column="id" />
+        <result property="coverImg" column="coverImg" />
+        <result property="title" column="title" />
+        <result property="createdTime" column="createdTime" />
+    </resultMap>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into log_view_video (videoId, userId, createdTime)
+        value (#{videoId}, #{userId}, #{createdTime})
+    </insert>
+
+    <select id="selectViewCount" resultType="long">
+        select count(1) from log_view_video where videoId = #{videoId}
+    </select>
+
+    <select id="selectViewPeopleCount" resultType="long">
+        select count(distinct userId) from log_view_video where videoId = #{videoId}
+    </select>
+
+    <select id="checkUserView" resultType="int">
+        select count(1) from log_view_video where videoId=#{videoId} and userId=#{userId}
+    </select>
+
+    <select id="findVideoViewLogByUserId" parameterType="int" resultMap="videoViewLogResultMap">
+      select v.id,v.coverImg,v.title,t.createdTime
+      from video v
+        inner join (select videoId, userId, createdTime from log_view_video where userId = #{userId}) t
+                  on v.id = t.videoId
+      where v.userId = #{videoUserId}
+      order by v.id,t.createdTime;
+    </select>
+
+    <select id="findVideoViewLogByVideoId" parameterType="int" resultMap="videoViewLogResultMap">
+      select u.id,u.headImg,u.userName,u.copyNo,t.createdTime
+      from app_user u
+        inner join (select videoId, userId, createdTime from log_view_video where videoId = #{videoId}) t
+                  on u.id = t.userId
+      where u.id != #{userId}
+      order by u.id,t.createdTime;
+    </select>
+
+
+</mapper>

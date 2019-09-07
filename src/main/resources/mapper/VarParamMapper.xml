@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.VarParamDao">
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.VarParam">
+        <id property="id" column="id"/>
+        <result property="varName" column="varName"/>
+        <result property="varValue" column="varValue"/>
+        <result property="varExpiresIn" column="varExpiresIn"/>
+        <result property="varDesc" column="varDesc"/>
+        <result property="remark" column="remark"/>
+        <result property="createdTime" column="createdTime"/>
+        <result property="updatedTime" column="updatedTime"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from var_param where id = #{id}
+    </select>
+
+    <select id="selectByVarName" resultMap="baseResultMap">
+        select * from var_param where varName = #{varName}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into var_param (varName, varValue, varExpiresIn, varDesc, createdTime, updatedTime)
+        value(#{varName}, #{varValue}, #{varExpiresIn}, #{varDesc}, #{createdTime}, #{updatedTime})
+    </insert>
+
+    <update id="modify">
+        update var_param
+        <set>
+            <if test="varValue != null and varValue !=''">
+                varValue = #{varValue},
+            </if>
+            <if test="varExpiresIn != null">
+                varExpiresIn = #{varExpiresIn},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="updatedTime != null">
+                updatedTime = #{updatedTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="count" resultType="long">
+        select count(1) from var_param
+        <where>
+            <if test="varName != null and varName != ''">
+                and varName = #{varName}
+            </if>
+        </where>
+    </select>
+
+    <select id="pageSelectByParam" resultMap="baseResultMap">
+        select * from var_param
+        <where>
+            <if test="varName != null and varName != ''">
+                and varName = #{varName}
+            </if>
+        </where>
+        limit #{limit} offset #{offset}
+    </select>
+</mapper>

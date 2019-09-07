@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.AdvWxDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.AdvWx">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="headImg" column="headImg"/>
+        <result property="advName" column="advName"/>
+        <result property="advDesc" column="advDesc"/>
+        <result property="qrcode" column="qrcode"/>
+        <result property="type" column="type"/>
+        <result property="viewCount" column="viewCount"/>
+        <result property="peopleCount" column="peopleCount"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from adv_wx where id = #{id}
+    </select>
+
+    <select id="selectListByParam" resultMap="baseResultMap">
+        select * from adv_wx
+        <where>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+            <if test="keywords != null and keywords != ''">
+                and advName like '%${keywords}%'
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into adv_wx (userId, headImg, advName, advDesc, qrcode, `type`, viewCount,peopleCount)
+        value (#{userId}, #{headImg}, #{advName}, #{advDesc}, #{qrcode}, #{type}, #{viewCount},#{peopleCount})
+    </insert>
+
+    <update id="modifyWx">
+        update adv_wx
+        <set>
+          <if test="headImg != null and headImg != ''">
+              headImg = #{headImg},
+          </if>
+          <if test="advName != null and advName != ''">
+              advName = #{advName},
+          </if>
+          <if test="advDesc != null and advDesc != ''">
+              advDesc = #{advDesc},
+          </if>
+          <if test="qrcode != null and qrcode != ''">
+              qrcode = #{qrcode},
+          </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="modifyWxViewCountById">
+      update adv_wx set viewCount = viewCount + 1 where id = #{id}
+    </update>
+
+    <update id="modifyWxPeopleCountById">
+      update adv_wx set peopleCount = peopleCount + 1 where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from adv_wx where id = #{id}
+    </delete>
+
+</mapper>

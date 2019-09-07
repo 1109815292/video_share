@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.VideoCommentDao">
+
+    <select id="findCommentById" resultType="com.juheshi.video.entity.VideoComment">
+        select * from video_comment where id = #{id}
+    </select>
+
+    <select id="findCommentByVideoId" resultType="com.juheshi.video.entity.VideoComment">
+        select * from video_comment where videoId= #{videoId}
+    </select>
+
+    <select id="findCommentLike" parameterType="int" resultType="com.juheshi.video.entity.CommentLike">
+        select * from comment_like where commentId = #{commentId} and userId = #{userId}
+    </select>
+
+    <insert id="insertVideoComment" useGeneratedKeys="true" keyProperty="id" parameterType="com.juheshi.video.entity.VideoComment">
+        insert into video_comment (videoId, userId, commentCont, createdTime, likeCount)
+        values (#{videoId}, #{userId}, #{commentCont}, #{createdTime}, #{likeCount})
+    </insert>
+
+    <update id="updateVideoComment" parameterType="com.juheshi.video.entity.VideoComment">
+        update video_comment
+        <set>
+            <if test="likeCount != null">likeCount = #{likeCount},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insertCommentLike" parameterType="com.juheshi.video.entity.CommentLike">
+        insert into comment_like (commentId, userId, createdTime)
+        values (#{commentId}, #{userId}, #{createdTime})
+    </insert>
+
+    <delete id="deleteCommentLike" parameterType="int">
+        delete from comment_like where commentId = #{commentId} and userId = #{userId}
+    </delete>
+
+</mapper>

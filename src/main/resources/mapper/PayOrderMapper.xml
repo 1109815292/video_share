@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.PayOrderDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.PayOrder">
+        <id property="id" column="id"/>
+        <result property="orderNo" column="orderNo"/>
+        <result property="openId" column="openId"/>
+        <result property="userId" column="userId"/>
+        <result property="amount" column="amount"/>
+        <result property="payType" column="payType"/>
+        <result property="payTime" column="payTime"/>
+        <result property="objectType" column="objectType"/>
+        <result property="objectId" column="objectId"/>
+        <result property="prepayId" column="prepayId"/>
+        <result property="prepayRawData" column="prepayRawData"/>
+        <result property="callbackRawData" column="callbackRawData"/>
+        <result property="IPAddress" column="IPAddress"/>
+        <result property="state" column="state"/>
+        <result property="divideState" column="divideState"/>
+        <result property="stateRemark" column="stateRemark"/>
+        <result property="createdTime" column="createdTime"/>
+        <result property="storeCopyNo" column="storeCopyNo" />
+        <result property="industryId" column="industryId" />
+    </resultMap>
+
+    <resultMap id="appUserCascadeResultMap" extends="baseResultMap" type="com.juheshi.video.entity.PayOrder">
+        <association property="appUser" javaType="com.juheshi.video.entity.AppUser">
+            <id column="id" property="id"/>
+            <result column="copyNo" property="copyNo"/>
+            <result column="userName" property="userName"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="storeVipResultMap" type="map">
+        <id property="id" column="id" />
+        <result property="amount" column="amount" />
+        <result property="payTime" column="payTime" />
+        <association property="storeUser" javaType="map">
+            <id property="id" column="userId" />
+            <result property="headImg" column="headImg" />
+            <result property="userName" column="userName" />
+        </association>
+    </resultMap>
+
+    <sql id="baseColumns">
+         ${alias}.*
+    </sql>
+
+    <sql id="appUserColumns">
+        ${alias}.userName, ${alias}.copyNo
+    </sql>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from payorder where id = #{id}
+    </select>
+
+    <select id="selectByOrderNo" resultMap="baseResultMap">
+        select * from payorder where orderNo = #{orderNo}
+    </select>
+    <select id="selectByPrepayId" resultMap="baseResultMap">
+        select * from payorder where prepayId = #{prepayId}
+    </select>
+
+
+    <select id="count" resultType="long">
+        select count(1) from payorder po inner join app_user au on po.userId = au.id
+        <where>
+            <if test="search != null and search != ''">
+                and (au.userName like '%${search}%' or au.copyNo like '%${search}%')
+            </if>
+            <if test="state != null">
+                and po.state = #{state}
+            </if>
+            <if test="objectType != null">
+                and po.objectType = #{objectType}
+            </if>
+            <if test="userId != null">
+                and po.userId = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <select id="pageSelectByParam" resultMap="appUserCascadeResultMap">
+        select
+        <include refid="baseColumns">
+            <property name="alias" value="po"/>
+        </include>
+        ,
+        <include refid="appUserColumns">
+            <property name="alias" value="au"/>
+        </include>
+        from payorder po inner join app_user au on po.userId = au.id
+        <where>
+            <if test="search != null and search != ''">
+                and (au.userName like '%${search}%' or au.copyNo like '%${search}%')
+            </if>
+            <if test="state != null">
+                and po.state = #{state}
+            </if>
+            <if test="objectType != null">
+                and po.objectType = #{objectType}
+            </if>
+            <if test="userId != null">
+                and po.userId = #{userId}
+            </if>
+        </where>
+        order by createdTime desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="selectByParam" resultMap="baseResultMap">
+        select * from payorder
+        <where>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+            <if test="divideState != null">
+                and divideState = #{divideState}
+            </if>
+        </where>
+    </select>
+
+    <select id="findStoreVipPayOrder" resultMap="storeVipResultMap">
+        select a.id, a.amount, a.payTime, b.id as userId, b.headImg, b.userName
+        from payorder a left join app_user b on a.storeCopyNo = b.copyNo
+        where a.userId = #{userId} and a.objectType = 2 and a.state = 2
+        order by a.payTime desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="checkOrderNo" resultType="int">
+        select count(1) from payorder where orderNo = #{orderNo}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into payorder(orderNo,openId,userId,amount,payType,payTime,
+        objectType,objectId,prepayId,prepayRawData,callbackRawData,IPAddress,state,createdTime, storeCopyNo, industryId)
+        value (#{orderNo},#{openId},#{userId},#{amount},#{payType},#{payTime},
+        #{objectType},#{objectId},#{prepayId},#{prepayRawData},#{callbackRawData},#{IPAddress},#{state},#{createdTime},
+        #{storeCopyNo}, #{industryId})
+    </insert>
+
+    <update id="modifyPayOrder">
+        update payorder
+        <set>
+            <if test="payTime != null">
+                payTime = #{payTime},
+            </if>
+            <if test="prepayId != null and prepayId != ''">
+                prepayId = #{prepayId},
+            </if>
+            <if test="prepayRawData != null and prepayRawData != ''">
+                prepayRawData = #{prepayRawData},
+            </if>
+            <if test="callbackRawData != null and callbackRawData != ''">
+                callbackRawData = #{callbackRawData},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="stateRemark != null and stateRemark != ''">
+                stateRemark = #{stateRemark}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="modifyPayOrderState">
+        update payorder set state=case when state=#{stateFrom} then ${stateTo} end, stateRemark=#{stateRemark} where id = #{id}
+    </update>
+
+    <select id="selectTotalFlow" resultType="double">
+        select sum(amount) from payorder where state = 2
+    </select>
+
+    <update id="modifyPayOrderDivideState">
+        update payorder set divideState = #{divideState} where id = #{id}
+    </update>
+</mapper>

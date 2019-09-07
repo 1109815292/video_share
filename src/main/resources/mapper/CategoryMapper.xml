@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.CategoryDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.Category">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="group" column="group"/>
+        <result property="img" column="img"/>
+        <result property="sort" column="sort"/>
+        <result property="enabledFlag" column="enabledFlag"/>
+        <result property="videoCount" column="videoCount" />
+    </resultMap>
+
+    <insert id="save">
+        insert into category(id, `name`, `group`, img, sort, enabledFlag, videoCount)
+            value (#{id}, #{name}, #{group}, #{img}, #{sort}, #{enabledFlag}, #{videoCount})
+    </insert>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from category where id = #{id}
+    </select>
+
+    <select id="findAllCategory" resultMap="baseResultMap">
+        select * from category order by sort
+    </select>
+
+    <select id="selectByParam" resultMap="baseResultMap">
+        select * from category
+        <where>
+            <if test="group != null">
+                and `group` = #{group}
+            </if>
+            <if test="enabledFlag != null and enabledFlag != ''">
+                and enabledFlag = #{enabledFlag}
+            </if>
+        </where>
+        order by sort desc
+    </select>
+
+    <update id="updateCategoryVideoCount">
+        <![CDATA[ update category  set videoCount =  case when  videoCount + #{num} >= 0  then videoCount + #{num} when videoCount + #{num} <0 then 0 end  where id =  #{id} ]]>
+    </update>
+</mapper>

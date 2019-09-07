@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.WithdrawOrderDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.WithdrawOrder">
+        <id property="id" column="id" />
+        <result property="orderNo" column="orderNo" />
+        <result property="openId" column="openId" />
+        <result property="userId" column="userId" />
+        <result property="amount" column="amount" />
+        <result property="rechargeId" column="rechargeId" />
+        <result property="createdTime" column="createdTime" />
+        <result property="state" column="state" />
+        <result property="stateRemark" column="stateRemark" />
+    </resultMap>
+
+    <select id="checkOrderNo" resultType="int">
+        select count(1) from withdraw_order where orderNo = #{orderNo}
+    </select>
+
+    <insert id="insertWithdrawOrder" parameterType="com.juheshi.video.entity.WithdrawOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into withdraw_order (orderNo, openId, userId, amount, rechargeId, createdTime, state, stateRemark)
+        values (#{orderNo}, #{openId}, #{userId}, #{amount}, #{rechargeId}, #{createdTime}, #{state}, #{stateRemark})
+    </insert>
+
+    <update id="updateWithdrawOrder" parameterType="com.juheshi.video.entity.WithdrawOrder">
+        update withdraw_order
+        <set>
+            <if test="orderNo != null">orderNo = #{orderNo},</if>
+            <if test="openId != null">openId = #{openId},</if>
+            <if test="userId != null">userId = #{userId},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="rechargeId != null">rechargeId = #{rechargeId},</if>
+            <if test="createdTime != null">createdTime = #{createdTime},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="stateRemark != null">stateRemark = #{stateRemark},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="findByRechargeDivideId" resultMap="baseResultMap">
+          select * from withdraw_order where rechargeId = #{rechargeId}
+    </select>
+
+    <select id="selectTotalAmount" resultType="double">
+        select sum(amount) from withdraw_order where state = 1
+    </select>
+</mapper>

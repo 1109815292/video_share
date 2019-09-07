@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.SeckillGoodsDao">
+
+    <sql id="ressult">
+        a.id as id,
+        a.name as name,
+        a.introduction as introduction,
+        a.small_pic as smallPic,
+        a.price as price,
+        a.cost_price as costPrice,
+        a.separate as separate,
+        a.store_id as storeId,
+        b.storeName as storeName,
+        a.create_time as createTime,
+        a.check_time as checkTime,
+        a.status as status,
+        a.start_time as startTime,
+        a.end_time as endTime,
+        a.consume_time as consumeTime,
+        a.num as num,
+        a.quota as quota,
+        a.phone as phone,
+        a.groups as groups,
+        a.create_user as createUser
+
+
+    </sql>
+
+    <select id="findOneSeckillGoods" resultType="com.juheshi.video.entity.SeckillGoods">
+        select
+        <include refid="ressult"/>
+        from seckill_goods a left join adv_store b on a.store_id = b.id
+        <where>
+
+        </where>
+    </select>
+
+    <select id="listSeckillGoods" resultType="com.juheshi.video.entity.SeckillGoods" parameterType="com.juheshi.video.entity.SeckillGoods">
+        select
+        <include refid="ressult"/>
+        from seckill_goods a left join adv_store b on a.store_id = b.id
+        <where>
+            <if test="name != null and name != ''">
+                and a.name like '%'||#{name}||'%'
+            </if>
+            <if test="storeId != null and storeId != ''">
+                and a.store_id = #{storeId}
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+        </where>
+        order by a.create_time desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="listSeckillGoodsNum" resultType="java.lang.Integer" parameterType="com.juheshi.video.entity.SeckillGoods">
+        select
+        count(1)
+        from seckill_goods
+        <where>
+            <if test="name != null and name != ''">
+                and name like '%'||#{name}||'%'
+            </if>
+            <if test="storeId != null and storeId != ''">
+                and store_id = #{storeId}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertSeckillGoods" useGeneratedKeys="true" keyProperty="id" parameterType="com.juheshi.video.entity.SeckillGoods">
+        insert into seckill_goods (
+                    name,
+                    introduction,
+                    small_pic,
+                    price,
+                    cost_price,
+                    separate,
+                    store_id,
+                    create_time,
+                    check_time,
+                    status,
+                    start_time,
+                    end_time,
+                    consume_time,
+                    num,
+                    quota,
+                    phone,
+                    groups,
+                    create_user
+                    ) values (
+                    #{name},
+                    #{introduction},
+                    #{smallPic},
+                    #{price},
+                    #{costPrice},
+                    #{separate},
+                    #{storeId},
+                    #{createTime},
+                    #{checkTime},
+                    #{status},
+                    #{startTime},
+                    #{endTime},
+                    #{consumeTime},
+                    #{num},
+                    #{quota},
+                    #{phone},
+                    #{groups},
+                    #{createUser}
+                    )
+    </insert>
+
+    <update id="updateSeckillGoods" parameterType="com.juheshi.video.entity.SeckillGoods">
+        update seckill_goods set
+            name = #{name},
+            introduction = #{introduction},
+            small_pic = #{smallPic},
+            price = #{price},
+            cost_price = #{costPrice},
+            separate = #{separate},
+            store_id = #{storeId},
+            create_time = #{createTime},
+            check_time = #{checkTime},
+            status = #{status},
+            start_time = #{startTime},
+            end_time = #{endTime},
+            consume_time = #{consumeTime},
+            num = #{num},
+            quota = #{quota},
+            phone = #{phone},
+            groups = #{groups}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSeckillGoods" parameterType="java.lang.Integer">
+        delete from seckill_goods where id = #{id}
+    </delete>
+</mapper>

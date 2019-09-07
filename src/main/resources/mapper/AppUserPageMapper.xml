@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.AppUserPageDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.AppUserPage">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="pageName" column="pageName"/>
+        <result property="companyName" column="companyName"/>
+        <result property="name" column="name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="wx" column="wx"/>
+        <result property="sign" column="sign"/>
+        <result property="wxQRCode" column="wxQRCode"/>
+        <result property="pageBackgroundColor" column="pageBackgroundColor"/>
+        <result property="viewCount" column="viewCount"/>
+        <result property="peopleCount" column="peopleCount"/>
+    </resultMap>
+
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into app_user_page (userId, pageName, companyName, `name`,
+        mobile, wx, sign, wxQRCode, pageBackgroundColor, viewCount, peopleCount)
+        value (#{userId}, #{pageName}, #{companyName}, #{name},
+        #{mobile}, #{wx}, #{sign}, #{wxQRCode}, #{pageBackgroundColor},#{viewCount}, #{peopleCount})
+    </insert>
+
+    <select id="selectByUserId" resultMap="baseResultMap">
+        select * from app_user_page where userId = #{userId}
+    </select>
+
+    <update id="modifyUserPage">
+        update app_user_page
+        <set>
+            <if test="pageName != null and pageName != ''">
+                pageName = #{pageName},
+            </if>
+            <if test="companyName != null and companyName != ''">
+                companyName = #{companyName},
+            </if>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="wx != null and wx != ''">
+                wx = #{wx},
+            </if>
+            <if test="sign != null and sign != ''">
+                sign = #{sign},
+            </if>
+            <if test="wxQRCode != null and wxQRCode != ''">
+                wxQRCode = #{wxQRCode},
+            </if>
+            <if test="pageBackgroundColor != null and pageBackgroundColor != ''">
+                pageBackgroundColor = #{pageBackgroundColor},
+            </if>
+        </set>
+        where userId = #{userId}
+    </update>
+
+    <update id="modifyViewCount">
+      update app_user_page set viewCount = viewCount + 1 where id = #{id}
+    </update>
+
+    <update id="modifyPeopleCount">
+      update app_user_page set peopleCount = peopleCount + 1 where id = #{id}
+    </update>
+
+    <select id="getUserPage" parameterType="java.util.HashMap" resultType="com.juheshi.video.entity.AppUserPage">
+        SELECT
+            p.id,
+            u.headImg,
+            u.userName,
+            p.mobile,
+            COUNT(p.id) as peopleCount,
+            MIN(g.consume_time) as copyNo
+        FROM seckill_order o
+        LEFT JOIN app_user_page p ON p.id = o.user_id
+        LEFT JOIN app_user u ON u.id = p.id
+        LEFT JOIN seckill_goods g ON o.seckill_id = g.id
+        <where>
+            <if test="userId != null and userId != ''">
+                and u.id = #{userId}
+            </if>
+            <if test="phone != null and phone != ''">
+                and p.mobile = #{phone}
+            </if>
+            <if test="consumeTimeBegin != null and consumeTimeBegin != ''">
+                and g.consume_time &gt;= #{consumeTimeBegin}
+            </if>
+            <if test="consumeTimeEnd != null and consumeTimeEnd != ''">
+                and g.consume_time &lt;= #{consumeTimeEnd}
+            </if>
+        </where>
+        GROUP BY p.id
+        <if test="times != null and times != ''">
+            having COUNT(p.id) &gt;= #{times}
+        </if>
+    </select>
+
+    <select id="numUserPage" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        SELECT
+        count (1)
+        FROM seckill_order o
+        LEFT JOIN app_user_page p ON p.id = o.user_id
+        LEFT JOIN app_user u ON u.id = p.id
+        LEFT JOIN seckill_goods g ON o.seckill_id = g.id
+        <where>
+            <if test="userId != null and userId != ''">
+                and u.id = #{userId}
+            </if>
+            <if test="phone != null and phone != ''">
+                and p.mobile = #{phone}
+            </if>
+            <if test="consumeTimeBegin != null and consumeTimeBegin != ''">
+                and g.consume_time &gt;= #{consumeTimeBegin}
+            </if>
+            <if test="consumeTimeEnd != null and consumeTimeEnd != ''">
+                and g.consume_time &lt;= #{consumeTimeEnd}
+            </if>
+        </where>
+        GROUP BY p.id
+        <if test="times != null and times != ''">
+            having COUNT(p.id) &gt;= #{times}
+        </if>
+    </select>
+</mapper>

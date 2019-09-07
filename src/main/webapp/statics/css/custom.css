@@ -1,0 +1,13 @@
+
+.billhead{margin:0 auto;width:95%;position:relative;}
+.billhead .corpName{font-size:28px; letter-spacing: 8px; text-align: center;}
+.billhead .address{font-size:15px; letter-spacing: 0px;text-align: center;margin-top:10px;}
+.billhead .tel{font-size:15px;letter-spacing: 0px; text-align: center;margin-top:1px;}
+.billhead .title{font-size:25px;letter-spacing:15px;text-align: center;margin-top:10px;}
+.billhead .billNo{float:right;position: absolute;top:90px;right:30px;}
+.billhead .master{width:100%; margin-top:5px;font-size:15px;float:left;}
+.billhead .master .label{float:left;min-width:200px;}
+.billhead .master .deliverDate{float:right;margin-left:20px;}
+
+.billbottom{margin:0 auto;width:95%;}
+.billbottom .label{float:left;width:50%;}

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.CardBagDao">
+
+    <sql id="ressult">
+        c.id as id,
+        c.user_id as userId,
+        c.seckill_id as seckillId,
+        c.order_id as orderId,
+        c.exam_code as examCode,
+        a.id as id,
+        a.name as name,
+        a.introduction as introduction,
+        a.small_pic as smallPic,
+        a.price as price,
+        a.cost_price as costPrice,
+        a.separate as separate,
+        a.store_id as storeId,
+        b.storeName as storeName,
+        a.create_time as createTime,
+        a.check_time as checkTime,
+        a.status as status,
+        a.start_time as startTime,
+        a.end_time as endTime,
+        a.consume_time as consumeTime,
+        a.num as num,
+        a.quota as quota,
+        a.phone as phone,
+        a.groups as groups,
+        a.create_user as createUser,
+        o.id as id,
+        o.seckill_id as seckillId,
+        o.money as money,
+        o.centre_money as centreMoney,
+        o.shop_money as shopMoney,
+        o.user_id as userId,
+        o.store_id as storeId,
+        o.create_time as createTime,
+        o.pay_time as payTime,
+        o.status as status,
+        o.receiver_address as receiverAddress,
+        o.receiver_mobile as receiverMobile,
+        o.receiver as receiver,
+        o.transaction_id as transactionId,
+        o.examine as examine,
+        o.examine_time as examinetime,
+        o.is_cost as isCost,
+        o.main_order as mainOrder
+    </sql>
+
+    <select id="findOneCardBag" resultType="com.juheshi.video.entity.CardBag" parameterType="com.juheshi.video.entity.CardBag">
+        select
+        <include refid="ressult"/>
+        from card_bag c
+        LEFT JOIN seckill_goods a on c.seckill_id = a.id
+        LEFT JOIN seckill_order o on c.order_id = o.id
+        LEFT JOIN adv_store b on a.store_id = b.id
+        <where>
+
+        </where>
+    </select>
+
+    <select id="listCardBag" resultType="com.juheshi.video.entity.CardBag" parameterType="com.juheshi.video.entity.CardBag">
+        select
+        <include refid="ressult"/>
+        from card_bag c
+        LEFT JOIN seckill_goods a on c.seckill_id = a.id
+        LEFT JOIN seckill_order o on c.order_id = o.id
+        LEFT JOIN adv_store b on a.store_id = b.id
+        <where>
+
+        </where>
+        order by a.create_time desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="numCardBag" resultType="java.lang.Integer" parameterType="com.juheshi.video.entity.CardBag">
+        select
+        count(1)
+        from card_bag c
+        LEFT JOIN seckill_goods a on c.seckill_id = a.id
+        LEFT JOIN seckill_order o on c.order_id = o.id
+        LEFT JOIN adv_store b on a.store_id = b.id
+        <where>
+
+        </where>
+    </select>
+
+    <insert id="insertCardBag" useGeneratedKeys="true" keyProperty="id" parameterType="com.juheshi.video.entity.CardBag">
+        insert into card_bag (
+                    user_id,
+                    seckill_id,
+                    order_id,
+                    exam_code
+                    ) values (
+                    #{userId},
+                    #{seckillId},
+                    #{orderId},
+                    #{examCode}
+                    )
+    </insert>
+
+    <update id="updateCardBag" parameterType="com.juheshi.video.entity.CardBag">
+        update card_bag set
+            user_id = #{userId},
+            seckill_id = #{seckillId},
+            order_id = #{orderId},
+            exam_code = #{examCode}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCardBag" parameterType="java.lang.Integer">
+        delete from card_bag where id = #{id}
+    </delete>
+</mapper>

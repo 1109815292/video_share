@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.CfgWxMessageDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.CfgWxMessage">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="type" column="type"/>
+        <result property="triggerPosition" column="triggerPosition"/>
+        <result property="content" column="content"/>
+        <result property="templateId" column="templateId"/>
+        <result property="templateData" column="templateData"/>
+        <result property="templateUrl" column="templateUrl"/>
+        <result property="msgType" column="msgType"/>
+        <result property="mediaId" column="mediaId"/>
+        <result property="newsDesc" column="newsDesc"/>
+        <result property="newsUrl" column="newsUrl"/>
+        <result property="newsPicUrl" column="newsPicUrl"/>
+        <result property="sort" column="sort"/>
+        <result property="createdTime" column="createdTime"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from cfg_wx_message where id = #{id}
+    </select>
+
+    <select id="selectByParam" resultMap="baseResultMap">
+         select * from cfg_wx_message
+         <where>
+             <if test="type != null">
+                 and `type` = #{type}
+             </if>
+             <if test="triggerPosition != null">
+                 and triggerPosition like '%${triggerPosition}%'
+             </if>
+         </where>
+        order by sort desc, createdTime desc
+    </select>
+
+    <select id="countForPageSelectByParam" resultType="long">
+        select count(1) from cfg_wx_message
+        <where>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+            <if test="triggerPosition != null">
+                and triggerPosition like '%${triggerPosition}%'
+            </if>
+        </where>
+    </select>
+
+    <select id="pageSelectByParam" resultMap="baseResultMap">
+        select * from cfg_wx_message
+        <where>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+            <if test="triggerPosition != null">
+                and triggerPosition like '%${triggerPosition}%'
+            </if>
+        </where>
+        order by sort desc, createdTime desc
+        limit #{limit} offset #{offset}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juheshi.video.dao.AdvOtherDao">
+
+    <resultMap id="baseResultMap" type="com.juheshi.video.entity.AdvOther">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="name" column="name"/>
+        <result property="url" column="url"/>
+        <result property="desc" column="desc"/>
+        <result property="picUrl" column="picUrl"/>
+        <result property="qrcode" column="qrcode"/>
+        <result property="type" column="type"/>
+        <result property="viewCount" column="viewCount"/>
+        <result property="peopleCount" column="peopleCount"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from adv_other where id = #{id}
+    </select>
+
+    <select id="selectListByParam" resultMap="baseResultMap">
+        select * from adv_other
+        <where>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+            <if test="keywords != null and keywords != ''">
+                and `name` like '%${keywords}%'
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into adv_other (userId, `name`, url, `desc`, picUrl, qrcode, `type`, viewCount, peopleCount)
+        value (#{userId}, #{name}, #{url}, #{desc}, #{picUrl}, #{qrcode}, #{type}, #{viewCount}, #{peopleCount})
+    </insert>
+
+    <update id="modifyOther">
+        update adv_other
+        <set>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="url != null and url != ''">
+                url = #{url},
+            </if>
+            <if test="desc != null and desc != ''">
+                `desc` = #{desc},
+            </if>
+            <if test="picUrl != null and picUrl != ''">
+                picUrl = #{picUrl},
+            </if>
+            <if test="qrcode != null and qrcode != ''">
+                qrcode = #{qrcode},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="modifyOtherViewCountById">
+      update adv_other set viewCount = viewCount + 1 where id = #{id}
+    </update>
+
+    <update id="modifyOtherPeopleCountById">
+      update adv_other set peopleCount = peopleCount + 1 where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from adv_other where id = #{id}
+    </delete>
+
+</mapper>
